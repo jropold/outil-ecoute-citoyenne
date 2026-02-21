@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  base: '/outil-ecoute-citoyenne/',
   plugins: [
     react(),
     tailwindcss(),
@@ -18,7 +19,7 @@ export default defineConfig({
         background_color: '#F9FAFB',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/',
+        start_url: './',
         icons: [
           {
             src: '/pwa-192x192.png',
