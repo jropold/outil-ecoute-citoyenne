@@ -1,4 +1,4 @@
-import type { Profile, Quartier, Sector, ActionSector, ActionGroup, ActionGroupMember } from '../types/database';
+import type { Profile, Quartier, Sector, ActionSector, ActionGroup, ActionGroupMember, CampaignMember, ActionMember } from '../types/database';
 import type { GlobalKPIs, QuartierStats, DailyVisits, TopicCount } from '../types/models';
 
 // --- Quartiers (vide — créés dynamiquement via les actions) ---
@@ -65,3 +65,9 @@ export const demoActionGroups: ActionGroup[] = [];
 
 // --- Action group members (vide) ---
 export const demoActionGroupMembers: ActionGroupMember[] = [];
+
+// --- Campaign members (vide) ---
+export const demoCampaignMembers: CampaignMember[] = [];
+
+// --- Action members (vide) ---
+export const demoActionMembers: ActionMember[] = [];

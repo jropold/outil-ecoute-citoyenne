@@ -2,7 +2,7 @@ import { openDB } from 'idb';
 import type { OfflineVisit } from '../types/models';
 
 const DB_NAME = 'ecoute-citoyenne';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const STORE_NAME = 'offline-visits';
 
 async function getDB() {

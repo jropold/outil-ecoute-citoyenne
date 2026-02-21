@@ -3,8 +3,9 @@ import {
   demoProfile, demoVisits, demoQuartiers, demoSectors, demoKPIs,
   demoQuartierStats, demoDailyVisits, demoTopTopics, demoUsers,
   demoDailyActions, demoActionSectors, demoActionGroups, demoActionGroupMembers,
+  demoCampaignMembers, demoActionMembers,
 } from '../lib/demoData';
-import type { Profile, Quartier, Sector, Visit, DailyAction, ActionSector, ActionGroup, ActionGroupMember } from '../types/database';
+import type { Profile, Quartier, Sector, Visit, DailyAction, ActionSector, ActionGroup, ActionGroupMember, CampaignMember, ActionMember } from '../types/database';
 import type { GlobalKPIs, QuartierStats, DailyVisits, TopicCount } from '../types/models';
 
 export interface DemoContextType {
@@ -35,6 +36,14 @@ export interface DemoContextType {
   groupMembers: ActionGroupMember[];
   addGroupMember: (member: ActionGroupMember) => void;
   removeGroupMember: (memberId: string) => void;
+  // Campaign members
+  campaignMembers: CampaignMember[];
+  addCampaignMember: (member: CampaignMember) => void;
+  removeCampaignMember: (memberId: string) => void;
+  // Action members (junction)
+  actionMembers: ActionMember[];
+  addActionMember: (am: ActionMember) => void;
+  removeActionMember: (amId: string) => void;
 }
 
 const DemoContext = createContext<DemoContextType | null>(null);
@@ -57,6 +66,8 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   const [actionSectors, setActionSectors] = useState<ActionSector[]>(demoActionSectors);
   const [actionGroups, setActionGroups] = useState<ActionGroup[]>(demoActionGroups);
   const [groupMembers, setGroupMembers] = useState<ActionGroupMember[]>(demoActionGroupMembers);
+  const [campaignMembers, setCampaignMembers] = useState<CampaignMember[]>(demoCampaignMembers);
+  const [actionMembers, setActionMembers] = useState<ActionMember[]>(demoActionMembers);
 
   const enterDemo = useCallback(() => {
     localStorage.setItem('demo-mode', 'true');
@@ -99,6 +110,8 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       });
       return prev.filter(s => s.action_id !== actionId);
     });
+    // Cascade: remove action members
+    setActionMembers(prev => prev.filter(am => am.action_id !== actionId));
     // Optionally remove visits
     if (deleteVisits) {
       setVisits(prev => prev.filter(v => v.action_id !== actionId));
@@ -142,6 +155,24 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     setGroupMembers(prev => prev.filter(m => m.id !== memberId));
   }, []);
 
+  // Campaign members
+  const addCampaignMember = useCallback((member: CampaignMember) => {
+    setCampaignMembers(prev => [...prev, member]);
+  }, []);
+
+  const removeCampaignMember = useCallback((memberId: string) => {
+    setCampaignMembers(prev => prev.filter(m => m.id !== memberId));
+  }, []);
+
+  // Action members (junction)
+  const addActionMember = useCallback((am: ActionMember) => {
+    setActionMembers(prev => [...prev, am]);
+  }, []);
+
+  const removeActionMember = useCallback((amId: string) => {
+    setActionMembers(prev => prev.filter(am => am.id !== amId));
+  }, []);
+
   return (
     <DemoContext.Provider value={{
       isDemo,
@@ -170,6 +201,12 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       groupMembers,
       addGroupMember,
       removeGroupMember,
+      campaignMembers,
+      addCampaignMember,
+      removeCampaignMember,
+      actionMembers,
+      addActionMember,
+      removeActionMember,
     }}>
       {children}
     </DemoContext.Provider>

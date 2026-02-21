@@ -113,6 +113,7 @@ export interface Database {
           household_voters: number | null;
           action_id: string | null;
           action_group_id: string | null;
+          conducted_by_member_id: string | null;
         };
         Insert: {
           id?: string;
@@ -135,6 +136,7 @@ export interface Database {
           household_voters?: number | null;
           action_id?: string | null;
           action_group_id?: string | null;
+          conducted_by_member_id?: string | null;
         };
         Update: {
           volunteer_id?: string;
@@ -155,6 +157,7 @@ export interface Database {
           household_voters?: number | null;
           action_id?: string | null;
           action_group_id?: string | null;
+          conducted_by_member_id?: string | null;
         };
         Relationships: [];
       };
@@ -284,6 +287,47 @@ export interface Database {
         };
         Relationships: [];
       };
+      campaign_members: {
+        Row: {
+          id: string;
+          first_name: string;
+          last_name: string;
+          role: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          first_name: string;
+          last_name: string;
+          role?: string;
+          created_at?: string;
+        };
+        Update: {
+          first_name?: string;
+          last_name?: string;
+          role?: string;
+        };
+        Relationships: [];
+      };
+      action_members: {
+        Row: {
+          id: string;
+          action_id: string;
+          member_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          action_id: string;
+          member_id: string;
+          created_at?: string;
+        };
+        Update: {
+          action_id?: string;
+          member_id?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -346,3 +390,5 @@ export type DailyAction = Database['public']['Tables']['daily_actions']['Row'];
 export type ActionSector = Database['public']['Tables']['action_sectors']['Row'];
 export type ActionGroup = Database['public']['Tables']['action_groups']['Row'];
 export type ActionGroupMember = Database['public']['Tables']['action_group_members']['Row'];
+export type CampaignMember = Database['public']['Tables']['campaign_members']['Row'];
+export type ActionMember = Database['public']['Tables']['action_members']['Row'];

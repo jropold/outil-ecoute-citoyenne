@@ -8,6 +8,7 @@ import { useQuartiers } from '../hooks/useQuartiers';
 import { useAuth } from '../hooks/useAuth';
 import { useRealtime } from '../hooks/useRealtime';
 import { useActiveAction } from '../hooks/useActiveAction';
+import { useCampaignMembers } from '../hooks/useCampaignMembers';
 
 export default function VisitPage() {
   const { profile } = useAuth();
@@ -23,6 +24,7 @@ export default function VisitPage() {
   );
 
   const { action: activeAction, groupId: activeGroupId } = useActiveAction(profile?.id || null);
+  const { members: campaignMembers } = useCampaignMembers();
 
   useRealtime('visits', useCallback(() => {
     fetchVisits();
@@ -81,7 +83,7 @@ export default function VisitPage() {
             onTopicChange={setFilterTopic}
           />
           <div className="mt-4">
-            <VisitList visits={filteredVisits} loading={loading} quartiers={quartiers} />
+            <VisitList visits={filteredVisits} loading={loading} quartiers={quartiers} campaignMembers={campaignMembers} />
           </div>
         </div>
       </div>

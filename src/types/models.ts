@@ -1,6 +1,6 @@
-import type { Profile, Quartier, Sector, Visit, SectorAssignment, ActionSector, ActionGroup, ActionGroupMember } from './database';
+import type { Profile, Quartier, Sector, Visit, SectorAssignment, ActionSector, ActionGroup, ActionGroupMember, CampaignMember, ActionMember } from './database';
 
-export type { Profile, Quartier, Sector, Visit, SectorAssignment, ActionSector, ActionGroup, ActionGroupMember };
+export type { Profile, Quartier, Sector, Visit, SectorAssignment, ActionSector, ActionGroup, ActionGroupMember, CampaignMember, ActionMember };
 
 export interface QuartierStats {
   quartier_id: string;
@@ -59,6 +59,7 @@ export interface OfflineVisit {
   household_voters: number | null;
   action_id: string | null;
   action_group_id: string | null;
+  conducted_by_member_id: string | null;
 }
 
 export interface SectorWithDetails extends Sector {

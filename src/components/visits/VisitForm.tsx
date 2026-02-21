@@ -9,10 +9,12 @@ import { useAuth } from '../../hooks/useAuth';
 import { useQuartiers } from '../../hooks/useQuartiers';
 import { useVisits } from '../../hooks/useVisits';
 import { useOfflineQueue } from '../../hooks/useOfflineQueue';
+import { useActionMembers } from '../../hooks/useActionMembers';
+import { useCampaignMembers } from '../../hooks/useCampaignMembers';
 import { saveOfflineVisit } from '../../lib/offlineStorage';
 import { findQuartierByLocation } from '../../lib/geoUtils';
 import { MAP_CENTER, TILE_URL, TILE_ATTRIBUTION } from '../../config/map';
-import { VISIT_TOPICS, COLORS } from '../../config/constants';
+import { VISIT_TOPICS, COLORS, CAMPAIGN_MEMBER_ROLES } from '../../config/constants';
 import type { VisitStatus } from '../../config/constants';
 
 const pinIcon = new L.Icon({
@@ -45,10 +47,10 @@ function RecenterMap({ lat, lng }: { lat: number | null; lng: number | null }) {
 }
 
 const statusOptions: { value: VisitStatus; label: string; color: string; emoji: string }[] = [
-  { value: 'sympathisant', label: 'Sympathisant', color: COLORS.sympathisant, emoji: '👍' },
-  { value: 'indecis', label: 'Indécis', color: COLORS.indecis, emoji: '🤔' },
-  { value: 'opposant', label: 'Opposant', color: COLORS.opposant, emoji: '👎' },
-  { value: 'absent', label: 'Absent', color: COLORS.absent, emoji: '🚪' },
+  { value: 'sympathisant', label: 'Sympathisant', color: COLORS.sympathisant, emoji: '\u{1F44D}' },
+  { value: 'indecis', label: 'Indécis', color: COLORS.indecis, emoji: '\u{1F914}' },
+  { value: 'opposant', label: 'Opposant', color: COLORS.opposant, emoji: '\u{1F44E}' },
+  { value: 'absent', label: 'Absent', color: COLORS.absent, emoji: '\u{1F6AA}' },
 ];
 
 interface VisitFormProps {
@@ -65,6 +67,8 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
   const { createVisit } = useVisits();
   const { isOnline, refreshCount } = useOfflineQueue();
   const { addToast } = useToast();
+  const { memberDetails: actionMemberDetails, addMemberToAction } = useActionMembers(activeActionId || null);
+  const { createMember: createCampaignMember } = useCampaignMembers();
 
   const [status, setStatus] = useState<VisitStatus | ''>('');
   const [quartierId, setQuartierId] = useState('');
@@ -85,6 +89,15 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
   const [contactAddress, setContactAddress] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [householdVoters, setHouseholdVoters] = useState('');
+  const [votersNotCommunicated, setVotersNotCommunicated] = useState(true);
+
+  // Conducted by
+  const [conductedByMemberId, setConductedByMemberId] = useState<string | null>(null);
+  const [showAddConductor, setShowAddConductor] = useState(false);
+  const [conductorFirstName, setConductorFirstName] = useState('');
+  const [conductorLastName, setConductorLastName] = useState('');
+  const [conductorRole, setConductorRole] = useState('Autre');
+  const [conductorCustomRole, setConductorCustomRole] = useState('');
 
   // Auto-select quartier from active action
   useEffect(() => {
@@ -123,6 +136,34 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
     if (detectedId) setQuartierId(detectedId);
   }, [quartiers]);
 
+  const handleConductedByChange = (value: string) => {
+    if (value === '__add__') {
+      setShowAddConductor(true);
+    } else {
+      setConductedByMemberId(value || null);
+    }
+  };
+
+  const handleAddConductor = async () => {
+    if (!conductorFirstName.trim() || !conductorLastName.trim()) return;
+    const role = conductorRole === 'Autre' && conductorCustomRole.trim() ? conductorCustomRole.trim() : conductorRole;
+    try {
+      const newMember = await createCampaignMember(conductorFirstName.trim(), conductorLastName.trim(), role);
+      // Also add to the active action if we have one
+      if (activeActionId) {
+        await addMemberToAction(newMember.id);
+      }
+      setConductedByMemberId(newMember.id);
+      setConductorFirstName('');
+      setConductorLastName('');
+      setConductorRole('Autre');
+      setConductorCustomRole('');
+      setShowAddConductor(false);
+    } catch {
+      addToast('Erreur lors de l\'ajout', 'error');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!status || !quartierId || !user) return;
@@ -145,9 +186,12 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
       contact_address: hasConsent && contactAddress ? contactAddress : null,
       contact_phone: hasConsent && contactPhone ? contactPhone : null,
       has_consent: hasConsent,
-      household_voters: hasConsent && status === 'sympathisant' && householdVoters ? parseInt(householdVoters, 10) : null,
+      household_voters: status === 'sympathisant'
+        ? (votersNotCommunicated ? null : (householdVoters ? parseInt(householdVoters, 10) : null))
+        : null,
       action_id: activeActionId || null,
       action_group_id: activeGroupId || null,
+      conducted_by_member_id: conductedByMemberId,
     };
 
     try {
@@ -176,6 +220,8 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
       setContactAddress('');
       setContactPhone('');
       setHouseholdVoters('');
+      setVotersNotCommunicated(true);
+      setConductedByMemberId(null);
       onSuccess?.();
     } catch (err) {
       // Fallback to offline
@@ -321,6 +367,81 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
         </div>
       </div>
 
+      {/* Mené par — after status selection */}
+      {status && status !== 'absent' && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Mené par</label>
+          <select
+            value={conductedByMemberId || ''}
+            onChange={(e) => handleConductedByChange(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A4A] focus:border-[#1B2A4A] text-sm"
+          >
+            <option value="">Militant (par défaut)</option>
+            {actionMemberDetails.map(m => (
+              <option key={m.id} value={m.id}>{m.first_name} {m.last_name} ({m.role})</option>
+            ))}
+            <option value="__add__">+ Ajouter une personne...</option>
+          </select>
+
+          {/* Inline add conductor form */}
+          {showAddConductor && (
+            <div className="mt-2 bg-gray-50 rounded-lg p-3 space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  value={conductorFirstName}
+                  onChange={(e) => setConductorFirstName(e.target.value)}
+                  placeholder="Prénom"
+                  className="px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A4A] focus:border-[#1B2A4A]"
+                />
+                <input
+                  type="text"
+                  value={conductorLastName}
+                  onChange={(e) => setConductorLastName(e.target.value)}
+                  placeholder="Nom"
+                  className="px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A4A] focus:border-[#1B2A4A]"
+                />
+              </div>
+              <select
+                value={conductorRole}
+                onChange={(e) => setConductorRole(e.target.value)}
+                className="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A4A] focus:border-[#1B2A4A]"
+              >
+                {CAMPAIGN_MEMBER_ROLES.map(r => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+              {conductorRole === 'Autre' && (
+                <input
+                  type="text"
+                  value={conductorCustomRole}
+                  onChange={(e) => setConductorCustomRole(e.target.value)}
+                  placeholder="Préciser le rôle..."
+                  className="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A4A] focus:border-[#1B2A4A]"
+                />
+              )}
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => { setShowAddConductor(false); setConductorFirstName(''); setConductorLastName(''); }}
+                  className="flex-1 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-800"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddConductor}
+                  disabled={!conductorFirstName.trim() || !conductorLastName.trim()}
+                  className="flex-1 px-3 py-1.5 bg-[#1B2A4A] text-white rounded-lg text-sm font-medium hover:bg-[#1B2A4A]/90 disabled:opacity-50"
+                >
+                  Ajouter
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Consent toggle + contact fields (only if not absent) */}
       {status && status !== 'absent' && (
         <>
@@ -390,28 +511,53 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
                   placeholder="+262 6XX XX XX XX"
                 />
               </div>
-
-              {/* Household voters (only for sympathisant) */}
-              {status === 'sympathisant' && (
-                <div>
-                  <label htmlFor="household-voters" className="block text-sm font-medium text-gray-700 mb-1">
-                    Nombre de votants dans le foyer
-                  </label>
-                  <input
-                    id="household-voters"
-                    type="number"
-                    min="1"
-                    max="20"
-                    value={householdVoters}
-                    onChange={(e) => setHouseholdVoters(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A4A] focus:border-[#1B2A4A]"
-                    placeholder="Nombre de sympathisants votants"
-                  />
-                </div>
-              )}
             </div>
           )}
         </>
+      )}
+
+      {/* Household voters for sympathisants — outside consent block */}
+      {status === 'sympathisant' && (
+        <div className="bg-green-50 rounded-lg p-4 space-y-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Nombre de votants dans le foyer
+          </label>
+          <p className="text-xs text-gray-500">Inclut la personne visitée. Si non communiqué, comptera comme 1.</p>
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="voters-mode"
+                checked={votersNotCommunicated}
+                onChange={() => { setVotersNotCommunicated(true); setHouseholdVoters(''); }}
+                className="text-[#1B2A4A]"
+              />
+              <span className="text-sm">Non communiqué</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="voters-mode"
+                checked={!votersNotCommunicated}
+                onChange={() => setVotersNotCommunicated(false)}
+                className="text-[#1B2A4A]"
+              />
+              <span className="text-sm">Indiquer un nombre</span>
+            </label>
+          </div>
+          {!votersNotCommunicated && (
+            <input
+              id="household-voters"
+              type="number"
+              min="1"
+              max="20"
+              value={householdVoters}
+              onChange={(e) => setHouseholdVoters(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A4A] focus:border-[#1B2A4A]"
+              placeholder="Nombre de votants sympathisants"
+            />
+          )}
+        </div>
       )}
 
       {/* Topic selection */}

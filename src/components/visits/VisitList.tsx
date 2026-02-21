@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Badge } from '../ui/Badge';
-import type { Visit, Quartier } from '../../types/database';
+import type { Visit, Quartier, CampaignMember } from '../../types/database';
 
 const statusConfig = {
   sympathisant: { label: 'Sympathisant', variant: 'success' as const },
@@ -13,14 +13,22 @@ interface VisitListProps {
   visits: Visit[];
   loading?: boolean;
   quartiers?: Quartier[];
+  campaignMembers?: CampaignMember[];
 }
 
-export function VisitList({ visits, loading, quartiers = [] }: VisitListProps) {
+export function VisitList({ visits, loading, quartiers = [], campaignMembers = [] }: VisitListProps) {
   const quartierMap = useMemo(() => {
     const map = new Map<string, string>();
     for (const q of quartiers) map.set(q.id, q.name);
     return map;
   }, [quartiers]);
+
+  const memberMap = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const m of campaignMembers) map.set(m.id, `${m.first_name} ${m.last_name}`);
+    return map;
+  }, [campaignMembers]);
+
   if (loading) {
     return (
       <div className="space-y-3">
@@ -51,6 +59,7 @@ export function VisitList({ visits, loading, quartiers = [] }: VisitListProps) {
       {visits.map((visit) => {
         const config = statusConfig[visit.status];
         const contactName = [visit.contact_first_name, visit.contact_last_name].filter(Boolean).join(' ');
+        const conductorName = visit.conducted_by_member_id ? memberMap.get(visit.conducted_by_member_id) : null;
         return (
           <div key={visit.id} className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
             <div className="flex items-start justify-between">
@@ -72,6 +81,9 @@ export function VisitList({ visits, loading, quartiers = [] }: VisitListProps) {
                   )}
                   {visit.household_voters && visit.household_voters > 0 && (
                     <Badge variant="default">{visit.household_voters} votant{visit.household_voters > 1 ? 's' : ''}</Badge>
+                  )}
+                  {conductorName && (
+                    <Badge variant="default">Par {conductorName}</Badge>
                   )}
                 </div>
                 {visit.comment && (

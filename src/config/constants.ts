@@ -46,6 +46,9 @@ export const USER_ROLES = [
 ] as const;
 export type UserRole = typeof USER_ROLES[number];
 
+export const CAMPAIGN_MEMBER_ROLES = ['Référent', 'Élu', 'Ambassadeur de quartier', 'Maire', 'Autre'] as const;
+export type CampaignMemberRole = typeof CAMPAIGN_MEMBER_ROLES[number];
+
 export const ROLE_LABELS: Record<UserRole, string> = {
   admin: 'Administrateur',
   direction_campagne: 'Direction de campagne',

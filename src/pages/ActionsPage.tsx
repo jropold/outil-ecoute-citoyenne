@@ -10,6 +10,7 @@ interface ActionStats {
   opposants: number;
   absents: number;
   supportRate: number;
+  sympathisantVoters: number;
 }
 
 function ActionsPage() {
@@ -28,7 +29,10 @@ function ActionsPage() {
       const total = actionVisits.length;
       const contacted = sympathisants + indecis + opposants;
       const supportRate = contacted > 0 ? Math.round((sympathisants / contacted) * 100) : 0;
-      map.set(action.id, { total, sympathisants, indecis, opposants, absents, supportRate });
+      const sympathisantVoters = actionVisits
+        .filter(v => v.status === 'sympathisant')
+        .reduce((sum, v) => sum + (v.household_voters ?? 1), 0);
+      map.set(action.id, { total, sympathisants, indecis, opposants, absents, supportRate, sympathisantVoters });
     }
     return map;
   }, [allActions, visits]);
@@ -77,7 +81,7 @@ function ActionsPage() {
       ) : (
         <div className="space-y-3">
           {sortedActions.map((action) => {
-            const stats = statsByAction.get(action.id) || { total: 0, sympathisants: 0, indecis: 0, opposants: 0, absents: 0, supportRate: 0 };
+            const stats = statsByAction.get(action.id) || { total: 0, sympathisants: 0, indecis: 0, opposants: 0, absents: 0, supportRate: 0, sympathisantVoters: 0 };
             return (
               <button
                 key={action.id}
@@ -109,6 +113,10 @@ function ActionsPage() {
                     <div className="text-lg font-bold text-green-600">{stats.sympathisants}</div>
                     <div className="text-[10px] text-gray-500 uppercase tracking-wide">Sympa.</div>
                   </div>
+                  <div className="text-center bg-green-50 rounded-lg py-1.5">
+                    <div className="text-lg font-bold text-green-700">{stats.sympathisantVoters}</div>
+                    <div className="text-[10px] text-gray-500 uppercase tracking-wide">Votant{stats.sympathisantVoters > 1 ? 's' : ''}</div>
+                  </div>
                   <div className="text-center bg-yellow-50 rounded-lg py-1.5">
                     <div className="text-lg font-bold text-yellow-600">{stats.indecis}</div>
                     <div className="text-[10px] text-gray-500 uppercase tracking-wide">Indécis</div>
@@ -121,9 +129,9 @@ function ActionsPage() {
                     <div className="text-lg font-bold text-gray-400">{stats.absents}</div>
                     <div className="text-[10px] text-gray-500 uppercase tracking-wide">Absents</div>
                   </div>
-                  <div className="text-center bg-[#E91E8C]/10 rounded-lg py-1.5">
+                  <div className="text-center bg-[#E91E8C]/10 rounded-lg py-1.5 col-span-3">
                     <div className="text-lg font-bold text-[#E91E8C]">{stats.supportRate}%</div>
-                    <div className="text-[10px] text-gray-500 uppercase tracking-wide">Soutien</div>
+                    <div className="text-[10px] text-gray-500 uppercase tracking-wide">Taux de soutien</div>
                   </div>
                 </div>
               </button>
