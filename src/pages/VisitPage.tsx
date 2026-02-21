@@ -33,7 +33,7 @@ export default function VisitPage() {
   const filteredVisits = visits.filter((v) => {
     if (filterQuartier && v.quartier_id !== filterQuartier) return false;
     if (filterStatus && v.status !== filterStatus) return false;
-    if (filterTopic && v.topic !== filterTopic) return false;
+    if (filterTopic && !v.topic?.split(',').some(t => t.trim() === filterTopic)) return false;
     return true;
   });
 
@@ -61,13 +61,24 @@ export default function VisitPage() {
         <div className={`lg:col-span-1 ${showForm ? '' : 'hidden lg:block'}`}>
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <h2 className="text-lg font-semibold text-[#1B2A4A] mb-4">Nouvelle visite</h2>
-            <VisitForm
-              onSuccess={fetchVisits}
-              activeActionId={activeAction?.id || null}
-              activeGroupId={activeGroupId}
-              activeActionName={activeAction?.name || null}
-              activeQuartierId={activeAction?.quartier_id || null}
-            />
+            {profile?.can_create_visits ? (
+              <VisitForm
+                onSuccess={fetchVisits}
+                activeActionId={activeAction?.id || null}
+                activeGroupId={activeGroupId}
+                activeActionName={activeAction?.name || null}
+                activeQuartierId={activeAction?.quartier_id || null}
+                activeActionGeometry={activeAction?.geometry || null}
+              />
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                </svg>
+                <p className="font-medium">Pas d'autorisation</p>
+                <p className="text-sm mt-1">Vous n'avez pas la permission de créer des visites. Contactez un administrateur.</p>
+              </div>
+            )}
           </div>
         </div>
 

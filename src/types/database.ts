@@ -11,6 +11,7 @@ export interface Database {
           phone: string | null;
           role: 'admin' | 'direction_campagne' | 'coordinateur_terrain' | 'responsable_quartier' | 'benevole';
           is_active: boolean;
+          can_create_visits: boolean;
           avatar_url: string | null;
           created_at: string;
           updated_at: string;
@@ -22,6 +23,7 @@ export interface Database {
           phone?: string | null;
           role?: 'admin' | 'direction_campagne' | 'coordinateur_terrain' | 'responsable_quartier' | 'benevole';
           is_active?: boolean;
+          can_create_visits?: boolean;
           avatar_url?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -33,6 +35,7 @@ export interface Database {
           phone?: string | null;
           role?: 'admin' | 'direction_campagne' | 'coordinateur_terrain' | 'responsable_quartier' | 'benevole';
           is_active?: boolean;
+          can_create_visits?: boolean;
           avatar_url?: string | null;
           updated_at?: string;
         };

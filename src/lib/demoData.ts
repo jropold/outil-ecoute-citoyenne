@@ -12,6 +12,7 @@ export const demoProfile: Profile = {
   phone: '+262 692 00 00 00',
   role: 'admin',
   is_active: true,
+  can_create_visits: true,
   avatar_url: null,
   created_at: '2025-01-15T00:00:00Z',
   updated_at: '2025-01-15T00:00:00Z',
@@ -23,11 +24,11 @@ export const demoSectors: Sector[] = [];
 // --- Team members ---
 export const demoUsers: Profile[] = [
   demoProfile,
-  { id: 'demo-user-002', email: 'juliana@teamjmd.re', full_name: 'Juliana M\'Doihoma', phone: null, role: 'direction_campagne', is_active: true, avatar_url: null, created_at: '2025-01-01T00:00:00Z', updated_at: '2025-01-01T00:00:00Z' },
-  { id: 'demo-user-003', email: 'thomas@teamjmd.re', full_name: 'Thomas Rivière', phone: null, role: 'responsable_quartier', is_active: true, avatar_url: null, created_at: '2025-01-10T00:00:00Z', updated_at: '2025-01-10T00:00:00Z' },
-  { id: 'demo-user-004', email: 'aisha@teamjmd.re', full_name: 'Aïsha Payet', phone: null, role: 'benevole', is_active: true, avatar_url: null, created_at: '2025-01-20T00:00:00Z', updated_at: '2025-01-20T00:00:00Z' },
-  { id: 'demo-user-005', email: 'lucas@teamjmd.re', full_name: 'Lucas Hoarau', phone: null, role: 'benevole', is_active: true, avatar_url: null, created_at: '2025-02-01T00:00:00Z', updated_at: '2025-02-01T00:00:00Z' },
-  { id: 'demo-user-006', email: 'sophie@teamjmd.re', full_name: 'Sophie Grondin', phone: null, role: 'benevole', is_active: false, avatar_url: null, created_at: '2025-01-05T00:00:00Z', updated_at: '2025-02-10T00:00:00Z' },
+  { id: 'demo-user-002', email: 'juliana@teamjmd.re', full_name: 'Juliana M\'Doihoma', phone: null, role: 'direction_campagne', is_active: true, can_create_visits: true, avatar_url: null, created_at: '2025-01-01T00:00:00Z', updated_at: '2025-01-01T00:00:00Z' },
+  { id: 'demo-user-003', email: 'thomas@teamjmd.re', full_name: 'Thomas Rivière', phone: null, role: 'responsable_quartier', is_active: true, can_create_visits: false, avatar_url: null, created_at: '2025-01-10T00:00:00Z', updated_at: '2025-01-10T00:00:00Z' },
+  { id: 'demo-user-004', email: 'aisha@teamjmd.re', full_name: 'Aïsha Payet', phone: null, role: 'benevole', is_active: true, can_create_visits: false, avatar_url: null, created_at: '2025-01-20T00:00:00Z', updated_at: '2025-01-20T00:00:00Z' },
+  { id: 'demo-user-005', email: 'lucas@teamjmd.re', full_name: 'Lucas Hoarau', phone: null, role: 'benevole', is_active: true, can_create_visits: false, avatar_url: null, created_at: '2025-02-01T00:00:00Z', updated_at: '2025-02-01T00:00:00Z' },
+  { id: 'demo-user-006', email: 'sophie@teamjmd.re', full_name: 'Sophie Grondin', phone: null, role: 'benevole', is_active: false, can_create_visits: false, avatar_url: null, created_at: '2025-01-05T00:00:00Z', updated_at: '2025-02-10T00:00:00Z' },
 ];
 
 // --- Visits (vide — à remplir sur le terrain) ---

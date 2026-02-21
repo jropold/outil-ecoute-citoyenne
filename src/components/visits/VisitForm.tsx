@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, GeoJSON, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Button } from '../ui/Button';
 import { Select } from '../ui/Select';
@@ -34,15 +34,28 @@ function MapClickHandler({ onLocationSelect }: { onLocationSelect: (lat: number,
   return null;
 }
 
-function RecenterMap({ lat, lng }: { lat: number | null; lng: number | null }) {
+function RecenterMap({ lat, lng, geometry }: { lat: number | null; lng: number | null; geometry?: unknown }) {
   const map = useMap();
   const hasCentered = useRef(false);
   useEffect(() => {
-    if (lat && lng && !hasCentered.current) {
+    if (hasCentered.current) return;
+    // If we have a geometry, fit to its bounds
+    if (geometry) {
+      try {
+        const geoLayer = L.geoJSON(geometry as GeoJSON.GeoJsonObject);
+        const bounds = geoLayer.getBounds();
+        if (bounds.isValid()) {
+          map.fitBounds(bounds, { padding: [20, 20] });
+          hasCentered.current = true;
+          return;
+        }
+      } catch { /* fallthrough to GPS */ }
+    }
+    if (lat && lng) {
       map.setView([lat, lng], 17);
       hasCentered.current = true;
     }
-  }, [lat, lng, map]);
+  }, [lat, lng, geometry, map]);
   return null;
 }
 
@@ -59,9 +72,10 @@ interface VisitFormProps {
   activeGroupId?: string | null;
   activeActionName?: string | null;
   activeQuartierId?: string | null;
+  activeActionGeometry?: unknown;
 }
 
-export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActionName, activeQuartierId }: VisitFormProps) {
+export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActionName, activeQuartierId, activeActionGeometry }: VisitFormProps) {
   const { user } = useAuth();
   const { quartiers } = useQuartiers(activeQuartierId ? undefined : { onlyFromActions: true });
   const { createVisit } = useVisits();
@@ -72,7 +86,7 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
 
   const [status, setStatus] = useState<VisitStatus | ''>('');
   const [quartierId, setQuartierId] = useState('');
-  const [topic, setTopic] = useState('');
+  const [topics, setTopics] = useState<string[]>([]);
   const [comment, setComment] = useState('');
   const [needsFollowup, setNeedsFollowup] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -175,7 +189,7 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
       sector_id: null,
       quartier_id: quartierId,
       status: status as VisitStatus,
-      topic: topic || null,
+      topic: topics.length > 0 ? topics.join(',') : null,
       comment: comment || null,
       latitude,
       longitude,
@@ -211,7 +225,7 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
 
       // Reset form
       setStatus('');
-      setTopic('');
+      setTopics([]);
       setComment('');
       setNeedsFollowup(false);
       setHasConsent(false);
@@ -309,7 +323,14 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
               >
                 <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
                 <MapClickHandler onLocationSelect={handleManualLocationSelect} />
-                <RecenterMap lat={latitude} lng={longitude} />
+                <RecenterMap lat={latitude} lng={longitude} geometry={activeActionGeometry} />
+                {activeActionGeometry ? (
+                  <GeoJSON
+                    key="active-zone"
+                    data={activeActionGeometry as GeoJSON.GeoJsonObject}
+                    style={{ color: '#E91E8C', weight: 2, fillColor: '#E91E8C', fillOpacity: 0.15 }}
+                  />
+                ) : null}
                 {latitude && longitude && (
                   <Marker position={[latitude, longitude]} icon={pinIcon} />
                 )}
@@ -560,25 +581,28 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
         </div>
       )}
 
-      {/* Topic selection */}
+      {/* Topic selection — multi */}
       {status && status !== 'absent' && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Préoccupation principale</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Préoccupations (choix multiples)</label>
           <div className="flex flex-wrap gap-2">
-            {VISIT_TOPICS.map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setTopic(topic === t ? '' : t)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                  topic === t
-                    ? 'bg-[#1B2A4A] text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {t}
-              </button>
-            ))}
+            {VISIT_TOPICS.map((t) => {
+              const selected = topics.includes(t);
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setTopics(selected ? topics.filter(x => x !== t) : [...topics, t])}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    selected
+                      ? 'bg-[#1B2A4A] text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {t}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}

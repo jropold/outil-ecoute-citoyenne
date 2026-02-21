@@ -13,6 +13,7 @@ const VisitPage = lazy(() => import('./pages/VisitPage'));
 const TeamPage = lazy(() => import('./pages/TeamPage'));
 const ActionsPage = lazy(() => import('./pages/ActionsPage'));
 const ActionDetailPage = lazy(() => import('./pages/ActionDetailPage'));
+const AccountPage = lazy(() => import('./pages/AccountPage'));
 
 function PageLoader() {
   return (
@@ -43,6 +44,7 @@ function App() {
                 <Route path="/visites" element={<VisitPage />} />
                 <Route path="/actions" element={<ActionsPage />} />
                 <Route path="/actions/:actionId" element={<ActionDetailPage />} />
+                <Route path="/compte" element={<AccountPage />} />
                 <Route
                   path="/equipe"
                   element={

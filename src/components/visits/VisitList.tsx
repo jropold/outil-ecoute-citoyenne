@@ -70,9 +70,9 @@ export function VisitList({ visits, loading, quartiers = [], campaignMembers = [
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <Badge variant={config.variant}>{config.label}</Badge>
                   <Badge variant="default">{quartierMap.get(visit.quartier_id) ?? visit.quartier_id}</Badge>
-                  {visit.topic && (
-                    <Badge variant="info">{visit.topic}</Badge>
-                  )}
+                  {visit.topic && visit.topic.split(',').map((t, i) => (
+                    <Badge key={i} variant="info">{t.trim()}</Badge>
+                  ))}
                   {visit.needs_followup && (
                     <Badge variant="accent">Suivi</Badge>
                   )}

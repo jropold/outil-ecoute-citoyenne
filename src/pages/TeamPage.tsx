@@ -3,6 +3,7 @@ import { supabase } from '../config/supabase';
 import { useDemo } from '../contexts/DemoContext';
 import { UserList } from '../components/users/UserList';
 import { InviteUser } from '../components/users/InviteUser';
+import { CreateUserForm } from '../components/users/CreateUserForm';
 import { Modal } from '../components/ui/Modal';
 import { Button } from '../components/ui/Button';
 import { Select } from '../components/ui/Select';
@@ -21,6 +22,10 @@ export default function TeamPage() {
   const [showInvite, setShowInvite] = useState(false);
   const [editUser, setEditUser] = useState<Profile | null>(null);
   const [editRole, setEditRole] = useState<UserRole>('benevole');
+  const [editCanCreateVisits, setEditCanCreateVisits] = useState(false);
+  const [editIsActive, setEditIsActive] = useState(true);
+  const [editFullName, setEditFullName] = useState('');
+  const [showCreateUser, setShowCreateUser] = useState(false);
 
   const canManage = currentProfile?.role === 'admin' || currentProfile?.role === 'coordinateur_terrain' || currentProfile?.role === 'direction_campagne';
   const isAdmin = currentProfile?.role === 'admin';
@@ -74,15 +79,20 @@ export default function TeamPage() {
     fetchUsers();
   }, [demo?.isDemo]);
 
-  const handleRoleUpdate = async () => {
+  const handleUserUpdate = async () => {
     if (!editUser) return;
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ role: editRole } as Database['public']['Tables']['profiles']['Update'])
+        .update({
+          role: editRole,
+          can_create_visits: editCanCreateVisits,
+          is_active: editIsActive,
+          full_name: editFullName,
+        } as Database['public']['Tables']['profiles']['Update'])
         .eq('id', editUser.id);
       if (error) throw error;
-      addToast('Rôle mis à jour', 'success');
+      addToast('Profil mis à jour', 'success');
       setEditUser(null);
       fetchUsers();
     } catch (err) {
@@ -97,11 +107,18 @@ export default function TeamPage() {
           <h1 className="text-2xl font-bold text-[#1B2A4A]">Équipe</h1>
           <p className="text-gray-500 text-sm mt-1">{users.length} membre{users.length > 1 ? 's' : ''}</p>
         </div>
-        {canManage && (
-          <Button variant="accent" onClick={() => setShowInvite(true)}>
-            Inviter
-          </Button>
-        )}
+        <div className="flex gap-2">
+          {isAdmin && (
+            <Button variant="accent" onClick={() => setShowCreateUser(true)}>
+              Créer un compte
+            </Button>
+          )}
+          {canManage && (
+            <Button variant="outline" onClick={() => setShowInvite(true)}>
+              Inviter
+            </Button>
+          )}
+        </div>
       </div>
 
       {isAdmin && pendingUsers.length > 0 && (
@@ -131,7 +148,13 @@ export default function TeamPage() {
       <UserList
         users={activeUsers}
         loading={loading}
-        onSelect={canManage ? (user) => { setEditUser(user); setEditRole(user.role as UserRole); } : undefined}
+        onSelect={canManage ? (user) => {
+          setEditUser(user);
+          setEditRole(user.role as UserRole);
+          setEditCanCreateVisits(user.can_create_visits ?? false);
+          setEditIsActive(user.is_active);
+          setEditFullName(user.full_name || '');
+        } : undefined}
       />
 
       {/* Invite Modal */}
@@ -139,24 +162,66 @@ export default function TeamPage() {
         <InviteUser onInvited={() => { setShowInvite(false); fetchUsers(); }} />
       </Modal>
 
-      {/* Edit Role Modal */}
-      <Modal isOpen={!!editUser} onClose={() => setEditUser(null)} title="Modifier le rôle">
+      {/* Edit User Modal */}
+      <Modal isOpen={!!editUser} onClose={() => setEditUser(null)} title="Modifier le membre">
         {editUser && (
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
-              <span className="font-medium">{editUser.full_name || editUser.email}</span>
-            </p>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
+              <input
+                type="text"
+                value={editFullName}
+                onChange={(e) => setEditFullName(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A4A] focus:border-[#1B2A4A]"
+              />
+            </div>
+            <p className="text-xs text-gray-500">{editUser.email}</p>
             <Select
               label="Rôle"
               value={editRole}
               onChange={(e) => setEditRole(e.target.value as UserRole)}
               options={USER_ROLES.map((r) => ({ value: r, label: ROLE_LABELS[r] }))}
             />
-            <Button variant="accent" className="w-full" onClick={handleRoleUpdate}>
+            <label className="flex items-center gap-3 cursor-pointer">
+              <div
+                className={`relative w-11 h-6 rounded-full transition-colors ${
+                  editCanCreateVisits ? 'bg-[#1B2A4A]' : 'bg-gray-300'
+                }`}
+                onClick={() => setEditCanCreateVisits(!editCanCreateVisits)}
+              >
+                <div
+                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                    editCanCreateVisits ? 'translate-x-5' : ''
+                  }`}
+                />
+              </div>
+              <span className="text-sm font-medium text-gray-700">Peut créer des visites</span>
+            </label>
+            <label className="flex items-center gap-3 cursor-pointer">
+              <div
+                className={`relative w-11 h-6 rounded-full transition-colors ${
+                  editIsActive ? 'bg-green-500' : 'bg-gray-300'
+                }`}
+                onClick={() => setEditIsActive(!editIsActive)}
+              >
+                <div
+                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                    editIsActive ? 'translate-x-5' : ''
+                  }`}
+                />
+              </div>
+              <span className="text-sm font-medium text-gray-700">Compte actif</span>
+            </label>
+            <Button variant="accent" className="w-full" onClick={handleUserUpdate}>
               Enregistrer
             </Button>
           </div>
         )}
+      </Modal>
+
+      {/* Create User Modal */}
+      <Modal isOpen={showCreateUser} onClose={() => setShowCreateUser(false)} title="Créer un compte">
+        <CreateUserForm onCreated={() => { setShowCreateUser(false); fetchUsers(); }} />
       </Modal>
     </div>
   );
