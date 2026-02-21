@@ -67,17 +67,29 @@ export function useDailyActions() {
       return newAction;
     }
 
-    // Supabase: create quartier first, then action linked to it
-    const { data: quartierData, error: quartierError } = await supabase
+    // Supabase: find existing quartier or create one
+    let quartierData: { id: string };
+    const { data: existing } = await supabase
       .from('quartiers')
-      .insert({
-        name: action.name,
-        geometry: action.geometry,
-        total_doors_estimate: 0,
-      } as Database['public']['Tables']['quartiers']['Insert'])
-      .select()
+      .select('id')
+      .eq('name', action.name)
       .single();
-    if (quartierError) throw quartierError;
+
+    if (existing) {
+      quartierData = existing;
+    } else {
+      const { data: created, error: quartierError } = await supabase
+        .from('quartiers')
+        .insert({
+          name: action.name,
+          geometry: action.geometry,
+          total_doors_estimate: 0,
+        } as Database['public']['Tables']['quartiers']['Insert'])
+        .select()
+        .single();
+      if (quartierError) throw quartierError;
+      quartierData = created;
+    }
 
     const { data, error } = await supabase
       .from('daily_actions')
