@@ -18,7 +18,7 @@ export default function ActionDetailPage() {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const demo = useDemo();
-  const { actions, deleteAction } = useDailyActions();
+  const { actions, allActions, loading: actionsLoading, deleteAction } = useDailyActions();
   const { visits } = useVisits();
   const { sectors, createSector, deleteSector } = useActionSectors(actionId || null);
   const [showCreateSector, setShowCreateSector] = useState(false);
@@ -28,8 +28,9 @@ export default function ActionDetailPage() {
 
   const isAdmin = profile ? ADMIN_ROLES.includes(profile.role) : false;
 
-  // Find the action — in demo mode check both active actions and the full demo list
+  // Find the action in active, all (includes completed), or demo fallback
   const action = actions.find(a => a.id === actionId)
+    || allActions.find(a => a.id === actionId)
     || (demo?.isDemo ? demo.dailyActions.find(a => a.id === actionId) : null);
 
   const users = demo?.isDemo ? demo.users : [];
@@ -47,6 +48,14 @@ export default function ActionDetailPage() {
       setDeleting(false);
     }
   };
+
+  if (actionsLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-[#1B2A4A] border-t-transparent" />
+      </div>
+    );
+  }
 
   if (!action) {
     return (
