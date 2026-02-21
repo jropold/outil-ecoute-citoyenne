@@ -8,7 +8,7 @@ import { useAuth } from '../hooks/useAuth';
 
 const ADMIN_ROLES = ['admin'];
 
-export function MapPage() {
+export default function MapPage() {
   const { actions, completeAction, cancelAction } = useDailyActions();
   const { profile } = useAuth();
   const navigate = useNavigate();

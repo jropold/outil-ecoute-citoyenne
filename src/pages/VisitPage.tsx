@@ -9,7 +9,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useRealtime } from '../hooks/useRealtime';
 import { useActiveAction } from '../hooks/useActiveAction';
 
-export function VisitPage() {
+export default function VisitPage() {
   const { profile } = useAuth();
   const { quartiers } = useQuartiers();
   const [showForm, setShowForm] = useState(true);

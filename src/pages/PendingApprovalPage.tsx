@@ -2,7 +2,7 @@ import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
 import { APP_NAME } from '../config/constants';
 
-export function PendingApprovalPage() {
+export default function PendingApprovalPage() {
   const { signOut, profile } = useAuth();
 
   return (

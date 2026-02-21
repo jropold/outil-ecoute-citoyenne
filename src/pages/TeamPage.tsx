@@ -12,7 +12,7 @@ import { USER_ROLES, ROLE_LABELS } from '../config/constants';
 import type { UserRole } from '../config/constants';
 import type { Profile, Database } from '../types/database';
 
-export function TeamPage() {
+export default function TeamPage() {
   const demo = useDemo();
   const { profile: currentProfile } = useAuth();
   const { addToast } = useToast();

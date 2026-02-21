@@ -11,7 +11,7 @@ import { useDemo } from '../contexts/DemoContext';
 
 const ADMIN_ROLES = ['admin'];
 
-export function ActionDetailPage() {
+export default function ActionDetailPage() {
   const { actionId } = useParams<{ actionId: string }>();
   const navigate = useNavigate();
   const { profile } = useAuth();

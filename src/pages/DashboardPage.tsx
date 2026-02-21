@@ -7,7 +7,7 @@ import { QuartierTable } from '../components/dashboard/QuartierTable';
 import { useStats } from '../hooks/useStats';
 import { useRealtime } from '../hooks/useRealtime';
 
-export function DashboardPage() {
+export default function DashboardPage() {
   const { kpis, quartierStats, dailyVisits, topTopics, loading, refetch } = useStats();
 
   useRealtime('visits', useCallback(() => {
