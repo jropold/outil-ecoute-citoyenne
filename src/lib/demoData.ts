@@ -242,17 +242,58 @@ for (const q of demoQuartiers) {
 }
 
 // Config per action: which day, how many visits
+// Plusieurs passes par quartier pour simuler des passages sur plusieurs jours (~150-200 visites/quartier)
 const actionConfig: { actionId: string; quartierId: string; daysBack: number; count: number; groupIds: (string | null)[] }[] = [
-  { actionId: 'action-cv', quartierId: 'q-centre-ville', daysBack: 0, count: 35, groupIds: ['ag-cv1a', 'ag-cv1b', 'ag-cv2a'] },
-  { actionId: 'action-gol', quartierId: 'q-le-gol', daysBack: 0, count: 25, groupIds: ['ag-gol1a', null] },
-  { actionId: 'action-ouaki', quartierId: 'q-ouaki', daysBack: 0, count: 20, groupIds: ['ag-ouaki1a', null] },
-  { actionId: 'action-riv', quartierId: 'q-riviere', daysBack: 1, count: 40, groupIds: [null] },
-  { actionId: 'action-bdn', quartierId: 'q-bois-olives', daysBack: 2, count: 35, groupIds: [null] },
-  { actionId: 'action-pg', quartierId: 'q-plateau-gol', daysBack: 3, count: 28, groupIds: [null] },
-  { actionId: 'action-cocos', quartierId: 'q-les-cocos', daysBack: 4, count: 25, groupIds: [null] },
-  { actionId: 'action-chapelle', quartierId: 'q-la-chapelle', daysBack: 5, count: 22, groupIds: [null] },
-  { actionId: 'action-tapage', quartierId: 'q-tapage', daysBack: 6, count: 30, groupIds: [null] },
-  { actionId: 'action-makes', quartierId: 'q-makes', daysBack: 7, count: 18, groupIds: [null] },
+  // Centre-Ville — ~200 visites (action active + historique)
+  { actionId: 'action-cv', quartierId: 'q-centre-ville', daysBack: 0, count: 55, groupIds: ['ag-cv1a', 'ag-cv1b', 'ag-cv2a'] },
+  { actionId: 'action-cv', quartierId: 'q-centre-ville', daysBack: 3, count: 50, groupIds: [null] },
+  { actionId: 'action-cv', quartierId: 'q-centre-ville', daysBack: 8, count: 50, groupIds: [null] },
+  { actionId: 'action-cv', quartierId: 'q-centre-ville', daysBack: 12, count: 45, groupIds: [null] },
+  // Le Gol — ~180
+  { actionId: 'action-gol', quartierId: 'q-le-gol', daysBack: 0, count: 45, groupIds: ['ag-gol1a', null] },
+  { actionId: 'action-gol', quartierId: 'q-le-gol', daysBack: 4, count: 50, groupIds: [null] },
+  { actionId: 'action-gol', quartierId: 'q-le-gol', daysBack: 9, count: 45, groupIds: [null] },
+  { actionId: 'action-gol', quartierId: 'q-le-gol', daysBack: 14, count: 40, groupIds: [null] },
+  // Le Ouaki — ~160
+  { actionId: 'action-ouaki', quartierId: 'q-ouaki', daysBack: 0, count: 40, groupIds: ['ag-ouaki1a', null] },
+  { actionId: 'action-ouaki', quartierId: 'q-ouaki', daysBack: 5, count: 45, groupIds: [null] },
+  { actionId: 'action-ouaki', quartierId: 'q-ouaki', daysBack: 10, count: 40, groupIds: [null] },
+  { actionId: 'action-ouaki', quartierId: 'q-ouaki', daysBack: 15, count: 35, groupIds: [null] },
+  // La Rivière — ~180
+  { actionId: 'action-riv', quartierId: 'q-riviere', daysBack: 1, count: 55, groupIds: [null] },
+  { actionId: 'action-riv', quartierId: 'q-riviere', daysBack: 6, count: 45, groupIds: [null] },
+  { actionId: 'action-riv', quartierId: 'q-riviere', daysBack: 11, count: 45, groupIds: [null] },
+  { actionId: 'action-riv', quartierId: 'q-riviere', daysBack: 16, count: 35, groupIds: [null] },
+  // Bois de Nèfles — ~170
+  { actionId: 'action-bdn', quartierId: 'q-bois-olives', daysBack: 2, count: 50, groupIds: [null] },
+  { actionId: 'action-bdn', quartierId: 'q-bois-olives', daysBack: 7, count: 45, groupIds: [null] },
+  { actionId: 'action-bdn', quartierId: 'q-bois-olives', daysBack: 13, count: 40, groupIds: [null] },
+  { actionId: 'action-bdn', quartierId: 'q-bois-olives', daysBack: 18, count: 35, groupIds: [null] },
+  // Plateau du Gol — ~150
+  { actionId: 'action-pg', quartierId: 'q-plateau-gol', daysBack: 3, count: 45, groupIds: [null] },
+  { actionId: 'action-pg', quartierId: 'q-plateau-gol', daysBack: 8, count: 40, groupIds: [null] },
+  { actionId: 'action-pg', quartierId: 'q-plateau-gol', daysBack: 14, count: 35, groupIds: [null] },
+  { actionId: 'action-pg', quartierId: 'q-plateau-gol', daysBack: 20, count: 30, groupIds: [null] },
+  // Les Cocos — ~140
+  { actionId: 'action-cocos', quartierId: 'q-les-cocos', daysBack: 4, count: 40, groupIds: [null] },
+  { actionId: 'action-cocos', quartierId: 'q-les-cocos', daysBack: 9, count: 40, groupIds: [null] },
+  { actionId: 'action-cocos', quartierId: 'q-les-cocos', daysBack: 15, count: 35, groupIds: [null] },
+  { actionId: 'action-cocos', quartierId: 'q-les-cocos', daysBack: 21, count: 25, groupIds: [null] },
+  // La Chapelle — ~130
+  { actionId: 'action-chapelle', quartierId: 'q-la-chapelle', daysBack: 5, count: 40, groupIds: [null] },
+  { actionId: 'action-chapelle', quartierId: 'q-la-chapelle', daysBack: 10, count: 35, groupIds: [null] },
+  { actionId: 'action-chapelle', quartierId: 'q-la-chapelle', daysBack: 17, count: 30, groupIds: [null] },
+  { actionId: 'action-chapelle', quartierId: 'q-la-chapelle', daysBack: 22, count: 25, groupIds: [null] },
+  // Tapage / Bel Air — ~160
+  { actionId: 'action-tapage', quartierId: 'q-tapage', daysBack: 6, count: 50, groupIds: [null] },
+  { actionId: 'action-tapage', quartierId: 'q-tapage', daysBack: 11, count: 45, groupIds: [null] },
+  { actionId: 'action-tapage', quartierId: 'q-tapage', daysBack: 16, count: 35, groupIds: [null] },
+  { actionId: 'action-tapage', quartierId: 'q-tapage', daysBack: 19, count: 30, groupIds: [null] },
+  // Les Makes — ~120
+  { actionId: 'action-makes', quartierId: 'q-makes', daysBack: 7, count: 35, groupIds: [null] },
+  { actionId: 'action-makes', quartierId: 'q-makes', daysBack: 12, count: 35, groupIds: [null] },
+  { actionId: 'action-makes', quartierId: 'q-makes', daysBack: 18, count: 30, groupIds: [null] },
+  { actionId: 'action-makes', quartierId: 'q-makes', daysBack: 23, count: 20, groupIds: [null] },
 ];
 
 function generateVisits(): Visit[] {
