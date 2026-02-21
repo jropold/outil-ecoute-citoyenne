@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
 import { Button } from '../ui/Button';
 import { Select } from '../ui/Select';
 import { useToast } from '../ui/Toast';
@@ -9,8 +11,26 @@ import { useVisits } from '../../hooks/useVisits';
 import { useOfflineQueue } from '../../hooks/useOfflineQueue';
 import { saveOfflineVisit } from '../../lib/offlineStorage';
 import { findQuartierByLocation } from '../../lib/geoUtils';
+import { MAP_CENTER, TILE_URL, TILE_ATTRIBUTION } from '../../config/map';
 import { VISIT_TOPICS, COLORS } from '../../config/constants';
 import type { VisitStatus } from '../../config/constants';
+
+const pinIcon = new L.Icon({
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+
+function MapClickHandler({ onLocationSelect }: { onLocationSelect: (lat: number, lng: number) => void }) {
+  useMapEvents({
+    click(e) {
+      onLocationSelect(e.latlng.lat, e.latlng.lng);
+    },
+  });
+  return null;
+}
 
 const statusOptions: { value: VisitStatus; label: string; color: string; emoji: string }[] = [
   { value: 'sympathisant', label: 'Sympathisant', color: COLORS.sympathisant, emoji: '👍' },
@@ -42,6 +62,8 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [geoLoading, setGeoLoading] = useState(false);
+  const [manualMode, setManualMode] = useState(false);
+  const [showMiniMap, setShowMiniMap] = useState(false);
 
   // Contact fields
   const [hasConsent, setHasConsent] = useState(false);
@@ -53,7 +75,7 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
 
   // Auto-detect GPS location
   useEffect(() => {
-    if ('geolocation' in navigator) {
+    if (!manualMode && 'geolocation' in navigator) {
       setGeoLoading(true);
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -64,10 +86,22 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
           if (detectedId) setQuartierId(detectedId);
           setGeoLoading(false);
         },
-        () => setGeoLoading(false),
+        () => {
+          setGeoLoading(false);
+          // GPS failed — open manual mode automatically
+          setManualMode(true);
+          setShowMiniMap(true);
+        },
         { enableHighAccuracy: true, timeout: 10000 }
       );
     }
+  }, [quartiers, manualMode]);
+
+  const handleManualLocationSelect = useCallback((lat: number, lng: number) => {
+    setLatitude(lat);
+    setLongitude(lng);
+    const detectedId = findQuartierByLocation(lat, lng, quartiers);
+    if (detectedId) setQuartierId(detectedId);
   }, [quartiers]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -153,23 +187,69 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
         </div>
       )}
 
-      {/* GPS Status */}
-      <div className="flex items-center gap-2 text-sm">
-        {geoLoading ? (
-          <span className="text-gray-500 flex items-center gap-1">
-            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-            Localisation GPS...
-          </span>
-        ) : latitude ? (
-          <span className="text-green-600 flex items-center gap-1">
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/></svg>
-            GPS actif
-          </span>
-        ) : (
-          <span className="text-gray-400 flex items-center gap-1">
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/></svg>
-            GPS indisponible
-          </span>
+      {/* GPS Status + Manual location */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-sm">
+            {geoLoading ? (
+              <span className="text-gray-500 flex items-center gap-1">
+                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                Localisation GPS...
+              </span>
+            ) : latitude ? (
+              <span className="text-green-600 flex items-center gap-1">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/></svg>
+                {manualMode ? 'Position manuelle' : 'GPS actif'}
+              </span>
+            ) : (
+              <span className="text-gray-400 flex items-center gap-1">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/></svg>
+                GPS indisponible
+              </span>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setManualMode(true);
+              setShowMiniMap(!showMiniMap);
+            }}
+            className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${
+              showMiniMap
+                ? 'bg-[#1B2A4A] text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            <span className="flex items-center gap-1">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              {showMiniMap ? 'Masquer carte' : 'Placer sur carte'}
+            </span>
+          </button>
+        </div>
+
+        {/* Mini-map for manual location */}
+        {showMiniMap && (
+          <div className="rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+            <p className="text-xs text-gray-500 bg-gray-50 px-2.5 py-1.5">Tapez sur la carte pour placer votre position</p>
+            <div className="h-48">
+              <MapContainer
+                center={latitude && longitude ? [latitude, longitude] : MAP_CENTER}
+                zoom={latitude && longitude ? 17 : 14}
+                className="h-full w-full z-0"
+                scrollWheelZoom={true}
+                zoomControl={false}
+              >
+                <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
+                <MapClickHandler onLocationSelect={handleManualLocationSelect} />
+                {latitude && longitude && (
+                  <Marker position={[latitude, longitude]} icon={pinIcon} />
+                )}
+              </MapContainer>
+            </div>
+          </div>
         )}
       </div>
 

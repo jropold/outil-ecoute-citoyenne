@@ -12,6 +12,9 @@ export function AppShell() {
         <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6 overflow-auto">
           <Outlet />
         </main>
+        <footer className="text-center text-xs text-gray-400 py-2 pb-18 md:pb-2">
+          Développé par Jérémy ROPAULD — 2026
+        </footer>
       </div>
       <MobileNav />
     </div>
