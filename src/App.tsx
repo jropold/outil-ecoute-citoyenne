@@ -11,6 +11,7 @@ const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const MapPage = lazy(() => import('./pages/MapPage'));
 const VisitPage = lazy(() => import('./pages/VisitPage'));
 const TeamPage = lazy(() => import('./pages/TeamPage'));
+const ActionsPage = lazy(() => import('./pages/ActionsPage'));
 const ActionDetailPage = lazy(() => import('./pages/ActionDetailPage'));
 
 function PageLoader() {
@@ -40,6 +41,7 @@ function App() {
                 <Route path="/" element={<DashboardPage />} />
                 <Route path="/carte" element={<MapPage />} />
                 <Route path="/visites" element={<VisitPage />} />
+                <Route path="/actions" element={<ActionsPage />} />
                 <Route path="/actions/:actionId" element={<ActionDetailPage />} />
                 <Route
                   path="/equipe"

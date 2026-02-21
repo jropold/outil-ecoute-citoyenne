@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Button } from '../ui/Button';
 import { Select } from '../ui/Select';
@@ -29,6 +29,18 @@ function MapClickHandler({ onLocationSelect }: { onLocationSelect: (lat: number,
       onLocationSelect(e.latlng.lat, e.latlng.lng);
     },
   });
+  return null;
+}
+
+function RecenterMap({ lat, lng }: { lat: number | null; lng: number | null }) {
+  const map = useMap();
+  const hasCentered = useRef(false);
+  useEffect(() => {
+    if (lat && lng && !hasCentered.current) {
+      map.setView([lat, lng], 17);
+      hasCentered.current = true;
+    }
+  }, [lat, lng, map]);
   return null;
 }
 
@@ -63,8 +75,8 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [geoLoading, setGeoLoading] = useState(false);
-  const [manualMode, setManualMode] = useState(false);
-  const [showMiniMap, setShowMiniMap] = useState(false);
+  const [manualMode, setManualMode] = useState(true);
+  const [showMiniMap, setShowMiniMap] = useState(true);
 
   // Contact fields
   const [hasConsent, setHasConsent] = useState(false);
@@ -81,9 +93,11 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
     }
   }, [activeQuartierId]);
 
-  // Auto-detect GPS location
+  // Auto-detect GPS location (used to pre-center the mini-map)
+  const gpsAttempted = useRef(false);
   useEffect(() => {
-    if (!manualMode && 'geolocation' in navigator) {
+    if (!gpsAttempted.current && 'geolocation' in navigator) {
+      gpsAttempted.current = true;
       setGeoLoading(true);
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -96,14 +110,11 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
         },
         () => {
           setGeoLoading(false);
-          // GPS failed — open manual mode automatically
-          setManualMode(true);
-          setShowMiniMap(true);
         },
         { enableHighAccuracy: true, timeout: 10000 }
       );
     }
-  }, [quartiers, manualMode]);
+  }, [quartiers]);
 
   const handleManualLocationSelect = useCallback((lat: number, lng: number) => {
     setLatitude(lat);
@@ -252,6 +263,7 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
               >
                 <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
                 <MapClickHandler onLocationSelect={handleManualLocationSelect} />
+                <RecenterMap lat={latitude} lng={longitude} />
                 {latitude && longitude && (
                   <Marker position={[latitude, longitude]} icon={pinIcon} />
                 )}
