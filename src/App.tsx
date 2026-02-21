@@ -9,6 +9,7 @@ import { MapPage } from './pages/MapPage';
 import { VisitPage } from './pages/VisitPage';
 import { TeamPage } from './pages/TeamPage';
 import { ActionDetailPage } from './pages/ActionDetailPage';
+import { PendingApprovalPage } from './pages/PendingApprovalPage';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <ToastProvider>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/en-attente" element={<PendingApprovalPage />} />
             <Route
               element={
                 <ProtectedRoute>

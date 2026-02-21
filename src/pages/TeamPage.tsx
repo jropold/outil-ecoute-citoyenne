@@ -23,6 +23,40 @@ export function TeamPage() {
   const [editRole, setEditRole] = useState<UserRole>('benevole');
 
   const canManage = currentProfile?.role === 'admin' || currentProfile?.role === 'coordinateur_terrain' || currentProfile?.role === 'direction_campagne';
+  const isAdmin = currentProfile?.role === 'admin';
+
+  const pendingUsers = users.filter(u => !u.is_active);
+  const activeUsers = users.filter(u => u.is_active);
+
+  const handleApprove = async (userId: string) => {
+    if (demo?.isDemo) return;
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ is_active: true } as Database['public']['Tables']['profiles']['Update'])
+        .eq('id', userId);
+      if (error) throw error;
+      addToast('Compte validé', 'success');
+      fetchUsers();
+    } catch (err) {
+      addToast('Erreur: ' + (err as Error).message, 'error');
+    }
+  };
+
+  const handleReject = async (userId: string) => {
+    if (demo?.isDemo) return;
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', userId);
+      if (error) throw error;
+      addToast('Compte refusé', 'success');
+      fetchUsers();
+    } catch (err) {
+      addToast('Erreur: ' + (err as Error).message, 'error');
+    }
+  };
 
   const fetchUsers = async () => {
     if (demo?.isDemo) {
@@ -70,8 +104,32 @@ export function TeamPage() {
         )}
       </div>
 
+      {isAdmin && pendingUsers.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-3">
+          <h2 className="font-semibold text-amber-800">
+            Comptes en attente ({pendingUsers.length})
+          </h2>
+          {pendingUsers.map(u => (
+            <div key={u.id} className="flex items-center justify-between bg-white rounded-lg p-3 shadow-sm">
+              <div>
+                <p className="font-medium text-sm text-gray-900">{u.full_name || 'Sans nom'}</p>
+                <p className="text-xs text-gray-500">{u.email}</p>
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" variant="accent" onClick={() => handleApprove(u.id)}>
+                  Valider
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => handleReject(u.id)}>
+                  Refuser
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       <UserList
-        users={users}
+        users={activeUsers}
         loading={loading}
         onSelect={canManage ? (user) => { setEditUser(user); setEditRole(user.role as UserRole); } : undefined}
       />

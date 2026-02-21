@@ -22,6 +22,10 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
     return <Navigate to="/login" replace />;
   }
 
+  if (profile && !profile.is_active) {
+    return <Navigate to="/en-attente" replace />;
+  }
+
   if (allowedRoles && profile && !allowedRoles.includes(profile.role as UserRole)) {
     return <Navigate to="/" replace />;
   }

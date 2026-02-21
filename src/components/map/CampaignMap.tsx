@@ -9,6 +9,7 @@ import { VisitHeatmapLayer } from './VisitHeatmapLayer';
 import { VisitMarkersLayer } from './VisitMarkersLayer';
 import { FitBoundsToAction } from './FitBoundsToAction';
 import { MapLayerToggle } from './MapLayerToggle';
+import { UserLocationMarker } from './UserLocationMarker';
 import { useQuartiers } from '../../hooks/useQuartiers';
 import { useStats } from '../../hooks/useStats';
 import { useVisits } from '../../hooks/useVisits';
@@ -30,6 +31,7 @@ export function CampaignMap({ activeActions = [], drawMode = false, drawnGeometr
   const { visits, loading: visitsLoading } = useVisits();
   const [showMarkers, setShowMarkers] = useState(true);
   const [showHeatmap, setShowHeatmap] = useState(false);
+  const [showLocation, setShowLocation] = useState(false);
 
   // Convert GeoJSON [lng, lat] → Leaflet [lat, lng] for preview polygon
   const previewPositions = useMemo<LatLngExpression[] | null>(() => {
@@ -63,6 +65,7 @@ export function CampaignMap({ activeActions = [], drawMode = false, drawnGeometr
         <ActionZoneLayer actions={activeActions} />
         <VisitMarkersLayer visits={visits} visible={showMarkers} />
         <VisitHeatmapLayer visits={visits} visible={showHeatmap} />
+        <UserLocationMarker visible={showLocation} />
         <FitBoundsToAction actions={activeActions} />
         {onPolygonDrawn && (
           <DrawControl enabled={drawMode} onPolygonCreated={onPolygonDrawn} onCancel={onDrawCancel} />
@@ -84,8 +87,10 @@ export function CampaignMap({ activeActions = [], drawMode = false, drawnGeometr
       <MapLayerToggle
         showMarkers={showMarkers}
         showHeatmap={showHeatmap}
+        showLocation={showLocation}
         onToggleMarkers={() => setShowMarkers((v) => !v)}
         onToggleHeatmap={() => setShowHeatmap((v) => !v)}
+        onToggleLocation={() => setShowLocation((v) => !v)}
       />
       <MapLegend hasActionZone={activeActions.length > 0} showVisitMarkers={showMarkers} />
     </div>
