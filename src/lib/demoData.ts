@@ -119,20 +119,40 @@ export const demoProfile: Profile = {
 
 export const demoSectors: Sector[] = [];
 
-// ───── Équipe ─────
+// ───── Équipe (25 membres) ─────
+const u = (id: string, email: string, name: string, role: Profile['role'], active: boolean, canVisit: boolean, phone: string | null = null): Profile => ({
+  id, email, full_name: name, phone, role, is_active: active, can_create_visits: canVisit, avatar_url: null,
+  created_at: '2025-01-15T00:00:00Z', updated_at: '2025-02-15T00:00:00Z',
+});
 export const demoUsers: Profile[] = [
   demoProfile,
-  { id: 'demo-user-002', email: 'juliana@teamjmd.re', full_name: 'Juliana M\'Doihoma', phone: null, role: 'direction_campagne', is_active: true, can_create_visits: true, avatar_url: null, created_at: '2025-01-01T00:00:00Z', updated_at: '2025-01-01T00:00:00Z' },
-  { id: 'demo-user-003', email: 'thomas@teamjmd.re', full_name: 'Thomas Rivière', phone: '+262 692 11 22 33', role: 'coordinateur_terrain', is_active: true, can_create_visits: true, avatar_url: null, created_at: '2025-01-10T00:00:00Z', updated_at: '2025-01-10T00:00:00Z' },
-  { id: 'demo-user-004', email: 'aisha@teamjmd.re', full_name: 'Aïsha Payet', phone: null, role: 'responsable_quartier', is_active: true, can_create_visits: true, avatar_url: null, created_at: '2025-01-20T00:00:00Z', updated_at: '2025-01-20T00:00:00Z' },
-  { id: 'demo-user-005', email: 'lucas@teamjmd.re', full_name: 'Lucas Hoarau', phone: null, role: 'benevole', is_active: true, can_create_visits: false, avatar_url: null, created_at: '2025-02-01T00:00:00Z', updated_at: '2025-02-01T00:00:00Z' },
-  { id: 'demo-user-006', email: 'sophie@teamjmd.re', full_name: 'Sophie Grondin', phone: null, role: 'benevole', is_active: true, can_create_visits: true, avatar_url: null, created_at: '2025-01-05T00:00:00Z', updated_at: '2025-02-10T00:00:00Z' },
-  { id: 'demo-user-007', email: 'marc@teamjmd.re', full_name: 'Marc Dijoux', phone: '+262 692 44 55 66', role: 'benevole', is_active: true, can_create_visits: true, avatar_url: null, created_at: '2025-02-05T00:00:00Z', updated_at: '2025-02-05T00:00:00Z' },
-  { id: 'demo-user-008', email: 'nadia@teamjmd.re', full_name: 'Nadia Fontaine', phone: null, role: 'responsable_quartier', is_active: true, can_create_visits: true, avatar_url: null, created_at: '2025-02-08T00:00:00Z', updated_at: '2025-02-08T00:00:00Z' },
-  { id: 'demo-user-009', email: 'eric@teamjmd.re', full_name: 'Éric Morel', phone: null, role: 'benevole', is_active: false, can_create_visits: false, avatar_url: null, created_at: '2025-01-25T00:00:00Z', updated_at: '2025-02-15T00:00:00Z' },
+  u('demo-user-002', 'juliana@teamjmd.re', 'Juliana M\'Doihoma', 'direction_campagne', true, true),
+  u('demo-user-003', 'thomas@teamjmd.re', 'Thomas Rivière', 'coordinateur_terrain', true, true, '+262 692 11 22 33'),
+  u('demo-user-004', 'aisha@teamjmd.re', 'Aïsha Payet', 'responsable_quartier', true, true),
+  u('demo-user-005', 'lucas@teamjmd.re', 'Lucas Hoarau', 'benevole', true, true),
+  u('demo-user-006', 'sophie@teamjmd.re', 'Sophie Grondin', 'benevole', true, true),
+  u('demo-user-007', 'marc@teamjmd.re', 'Marc Dijoux', 'benevole', true, true, '+262 692 44 55 66'),
+  u('demo-user-008', 'nadia@teamjmd.re', 'Nadia Fontaine', 'responsable_quartier', true, true),
+  u('demo-user-009', 'eric@teamjmd.re', 'Éric Morel', 'benevole', true, true),
+  u('demo-user-010', 'fatima@teamjmd.re', 'Fatima Abdallah', 'benevole', true, true),
+  u('demo-user-011', 'yannick@teamjmd.re', 'Yannick Maillot', 'responsable_quartier', true, true, '+262 692 77 88 99'),
+  u('demo-user-012', 'christine@teamjmd.re', 'Christine Nativel', 'benevole', true, true),
+  u('demo-user-013', 'david@teamjmd.re', 'David Sery', 'benevole', true, true),
+  u('demo-user-014', 'sandrine@teamjmd.re', 'Sandrine Lebon', 'coordinateur_terrain', true, true),
+  u('demo-user-015', 'alain@teamjmd.re', 'Alain Vidot', 'benevole', true, true),
+  u('demo-user-016', 'monique@teamjmd.re', 'Monique Cadet', 'benevole', true, true),
+  u('demo-user-017', 'thierry@teamjmd.re', 'Thierry Lauret', 'responsable_quartier', true, true, '+262 692 33 44 55'),
+  u('demo-user-018', 'veronique@teamjmd.re', 'Véronique Robert', 'benevole', true, true),
+  u('demo-user-019', 'christian@teamjmd.re', 'Christian Picard', 'benevole', true, true),
+  u('demo-user-020', 'sylvie@teamjmd.re', 'Sylvie Bègue', 'benevole', true, true),
+  u('demo-user-021', 'patrick@teamjmd.re', 'Patrick Hoarau', 'benevole', true, true, '+262 692 55 66 77'),
+  u('demo-user-022', 'catherine@teamjmd.re', 'Catherine Boyer', 'benevole', true, true),
+  u('demo-user-023', 'michel@teamjmd.re', 'Michel Payet', 'benevole', true, true),
+  u('demo-user-024', 'anne@teamjmd.re', 'Anne Grondin', 'benevole', true, false),
+  u('demo-user-025', 'francoise@teamjmd.re', 'Françoise Rivière', 'benevole', false, false),
 ];
 
-// ───── Membres de campagne ─────
+// ───── Membres de campagne (12) ─────
 export const demoCampaignMembers: CampaignMember[] = [
   { id: 'cm-001', first_name: 'Juliana', last_name: 'M\'Doihoma', role: 'Maire', created_at: '2025-01-01T00:00:00Z' },
   { id: 'cm-002', first_name: 'Thomas', last_name: 'Rivière', role: 'Référent', created_at: '2025-01-10T00:00:00Z' },
@@ -142,6 +162,10 @@ export const demoCampaignMembers: CampaignMember[] = [
   { id: 'cm-006', first_name: 'Yannick', last_name: 'Hoareau', role: 'Ambassadeur de quartier', created_at: '2025-02-03T00:00:00Z' },
   { id: 'cm-007', first_name: 'Sandrine', last_name: 'Lebon', role: 'Référent', created_at: '2025-02-05T00:00:00Z' },
   { id: 'cm-008', first_name: 'David', last_name: 'Grondin', role: 'Élu', created_at: '2025-02-07T00:00:00Z' },
+  { id: 'cm-009', first_name: 'Christine', last_name: 'Nativel', role: 'Ambassadeur de quartier', created_at: '2025-02-08T00:00:00Z' },
+  { id: 'cm-010', first_name: 'Alain', last_name: 'Vidot', role: 'Référent', created_at: '2025-02-10T00:00:00Z' },
+  { id: 'cm-011', first_name: 'Monique', last_name: 'Cadet', role: 'Ambassadeur de quartier', created_at: '2025-02-11T00:00:00Z' },
+  { id: 'cm-012', first_name: 'Thierry', last_name: 'Lauret', role: 'Élu', created_at: '2025-02-12T00:00:00Z' },
 ];
 
 // ───── Actions — 1 par quartier (actives aujourd'hui ou completed récemment) ─────
@@ -212,7 +236,7 @@ export const demoActionMembers: ActionMember[] = [
 
 // ───── Génération massive de visites ─────
 
-const volunteerIds = ['demo-user-001', 'demo-user-002', 'demo-user-003', 'demo-user-004', 'demo-user-005', 'demo-user-006', 'demo-user-007', 'demo-user-008'];
+const volunteerIds = demoUsers.filter(u => u.is_active).map(u => u.id);
 const campaignMemberIds = demoCampaignMembers.map(m => m.id);
 const statuses: Visit['status'][] = ['sympathisant', 'sympathisant', 'sympathisant', 'indecis', 'indecis', 'opposant', 'absent', 'absent'];
 const topics = ['Sécurité', 'Emploi', 'Voirie', 'Jeunesse', 'Fiscalité', 'Propreté', 'Transport', 'Logement', 'Santé', 'Éducation', 'Autre'];
@@ -241,59 +265,18 @@ for (const q of demoQuartiers) {
   };
 }
 
-// Config per action: which day, how many visits
-// Plusieurs passes par quartier pour simuler des passages sur plusieurs jours (~150-200 visites/quartier)
+// Config per action: 1 seul passage par quartier, 150-200 visites chacun
 const actionConfig: { actionId: string; quartierId: string; daysBack: number; count: number; groupIds: (string | null)[] }[] = [
-  // Centre-Ville — ~200 visites (action active + historique)
-  { actionId: 'action-cv', quartierId: 'q-centre-ville', daysBack: 0, count: 55, groupIds: ['ag-cv1a', 'ag-cv1b', 'ag-cv2a'] },
-  { actionId: 'action-cv', quartierId: 'q-centre-ville', daysBack: 3, count: 50, groupIds: [null] },
-  { actionId: 'action-cv', quartierId: 'q-centre-ville', daysBack: 8, count: 50, groupIds: [null] },
-  { actionId: 'action-cv', quartierId: 'q-centre-ville', daysBack: 12, count: 45, groupIds: [null] },
-  // Le Gol — ~180
-  { actionId: 'action-gol', quartierId: 'q-le-gol', daysBack: 0, count: 45, groupIds: ['ag-gol1a', null] },
-  { actionId: 'action-gol', quartierId: 'q-le-gol', daysBack: 4, count: 50, groupIds: [null] },
-  { actionId: 'action-gol', quartierId: 'q-le-gol', daysBack: 9, count: 45, groupIds: [null] },
-  { actionId: 'action-gol', quartierId: 'q-le-gol', daysBack: 14, count: 40, groupIds: [null] },
-  // Le Ouaki — ~160
-  { actionId: 'action-ouaki', quartierId: 'q-ouaki', daysBack: 0, count: 40, groupIds: ['ag-ouaki1a', null] },
-  { actionId: 'action-ouaki', quartierId: 'q-ouaki', daysBack: 5, count: 45, groupIds: [null] },
-  { actionId: 'action-ouaki', quartierId: 'q-ouaki', daysBack: 10, count: 40, groupIds: [null] },
-  { actionId: 'action-ouaki', quartierId: 'q-ouaki', daysBack: 15, count: 35, groupIds: [null] },
-  // La Rivière — ~180
-  { actionId: 'action-riv', quartierId: 'q-riviere', daysBack: 1, count: 55, groupIds: [null] },
-  { actionId: 'action-riv', quartierId: 'q-riviere', daysBack: 6, count: 45, groupIds: [null] },
-  { actionId: 'action-riv', quartierId: 'q-riviere', daysBack: 11, count: 45, groupIds: [null] },
-  { actionId: 'action-riv', quartierId: 'q-riviere', daysBack: 16, count: 35, groupIds: [null] },
-  // Bois de Nèfles — ~170
-  { actionId: 'action-bdn', quartierId: 'q-bois-olives', daysBack: 2, count: 50, groupIds: [null] },
-  { actionId: 'action-bdn', quartierId: 'q-bois-olives', daysBack: 7, count: 45, groupIds: [null] },
-  { actionId: 'action-bdn', quartierId: 'q-bois-olives', daysBack: 13, count: 40, groupIds: [null] },
-  { actionId: 'action-bdn', quartierId: 'q-bois-olives', daysBack: 18, count: 35, groupIds: [null] },
-  // Plateau du Gol — ~150
-  { actionId: 'action-pg', quartierId: 'q-plateau-gol', daysBack: 3, count: 45, groupIds: [null] },
-  { actionId: 'action-pg', quartierId: 'q-plateau-gol', daysBack: 8, count: 40, groupIds: [null] },
-  { actionId: 'action-pg', quartierId: 'q-plateau-gol', daysBack: 14, count: 35, groupIds: [null] },
-  { actionId: 'action-pg', quartierId: 'q-plateau-gol', daysBack: 20, count: 30, groupIds: [null] },
-  // Les Cocos — ~140
-  { actionId: 'action-cocos', quartierId: 'q-les-cocos', daysBack: 4, count: 40, groupIds: [null] },
-  { actionId: 'action-cocos', quartierId: 'q-les-cocos', daysBack: 9, count: 40, groupIds: [null] },
-  { actionId: 'action-cocos', quartierId: 'q-les-cocos', daysBack: 15, count: 35, groupIds: [null] },
-  { actionId: 'action-cocos', quartierId: 'q-les-cocos', daysBack: 21, count: 25, groupIds: [null] },
-  // La Chapelle — ~130
-  { actionId: 'action-chapelle', quartierId: 'q-la-chapelle', daysBack: 5, count: 40, groupIds: [null] },
-  { actionId: 'action-chapelle', quartierId: 'q-la-chapelle', daysBack: 10, count: 35, groupIds: [null] },
-  { actionId: 'action-chapelle', quartierId: 'q-la-chapelle', daysBack: 17, count: 30, groupIds: [null] },
-  { actionId: 'action-chapelle', quartierId: 'q-la-chapelle', daysBack: 22, count: 25, groupIds: [null] },
-  // Tapage / Bel Air — ~160
-  { actionId: 'action-tapage', quartierId: 'q-tapage', daysBack: 6, count: 50, groupIds: [null] },
-  { actionId: 'action-tapage', quartierId: 'q-tapage', daysBack: 11, count: 45, groupIds: [null] },
-  { actionId: 'action-tapage', quartierId: 'q-tapage', daysBack: 16, count: 35, groupIds: [null] },
-  { actionId: 'action-tapage', quartierId: 'q-tapage', daysBack: 19, count: 30, groupIds: [null] },
-  // Les Makes — ~120
-  { actionId: 'action-makes', quartierId: 'q-makes', daysBack: 7, count: 35, groupIds: [null] },
-  { actionId: 'action-makes', quartierId: 'q-makes', daysBack: 12, count: 35, groupIds: [null] },
-  { actionId: 'action-makes', quartierId: 'q-makes', daysBack: 18, count: 30, groupIds: [null] },
-  { actionId: 'action-makes', quartierId: 'q-makes', daysBack: 23, count: 20, groupIds: [null] },
+  { actionId: 'action-cv', quartierId: 'q-centre-ville', daysBack: 0, count: 200, groupIds: ['ag-cv1a', 'ag-cv1b', 'ag-cv2a'] },
+  { actionId: 'action-gol', quartierId: 'q-le-gol', daysBack: 0, count: 180, groupIds: ['ag-gol1a', null] },
+  { actionId: 'action-ouaki', quartierId: 'q-ouaki', daysBack: 0, count: 160, groupIds: ['ag-ouaki1a', null] },
+  { actionId: 'action-riv', quartierId: 'q-riviere', daysBack: 1, count: 190, groupIds: [null] },
+  { actionId: 'action-bdn', quartierId: 'q-bois-olives', daysBack: 2, count: 170, groupIds: [null] },
+  { actionId: 'action-pg', quartierId: 'q-plateau-gol', daysBack: 3, count: 150, groupIds: [null] },
+  { actionId: 'action-cocos', quartierId: 'q-les-cocos', daysBack: 4, count: 140, groupIds: [null] },
+  { actionId: 'action-chapelle', quartierId: 'q-la-chapelle', daysBack: 5, count: 130, groupIds: [null] },
+  { actionId: 'action-tapage', quartierId: 'q-tapage', daysBack: 6, count: 160, groupIds: [null] },
+  { actionId: 'action-makes', quartierId: 'q-makes', daysBack: 7, count: 120, groupIds: [null] },
 ];
 
 function generateVisits(): Visit[] {
