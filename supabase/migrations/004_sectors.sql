@@ -2,7 +2,7 @@
 CREATE TYPE sector_status AS ENUM ('non_couvert', 'partiellement_couvert', 'couvert');
 
 CREATE TABLE sectors (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   quartier_id UUID NOT NULL REFERENCES quartiers(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   geometry JSONB NOT NULL DEFAULT '{}',

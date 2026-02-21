@@ -1,6 +1,6 @@
 -- Sector assignments
 CREATE TABLE sector_assignments (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   sector_id UUID NOT NULL REFERENCES sectors(id) ON DELETE CASCADE,
   volunteer_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   assigned_by UUID NOT NULL REFERENCES profiles(id),

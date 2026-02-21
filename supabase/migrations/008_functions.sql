@@ -20,7 +20,7 @@ BEGIN
       COUNT(*) FILTER (WHERE v.status = 'opposant') AS opp,
       COUNT(*) FILTER (WHERE v.status = 'absent') AS abs
     FROM visits v
-  ),
+  )
   SELECT
     vc.total,
     vc.symp,

@@ -1,6 +1,6 @@
 -- 012: Action sectors - subdivide an action zone into sectors
 CREATE TABLE action_sectors (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   action_id UUID NOT NULL REFERENCES daily_actions(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   geometry JSONB NOT NULL DEFAULT '{}',

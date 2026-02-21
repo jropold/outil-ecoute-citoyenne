@@ -2,7 +2,7 @@
 CREATE TYPE visit_status AS ENUM ('sympathisant', 'indecis', 'opposant', 'absent');
 
 CREATE TABLE visits (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   volunteer_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   sector_id UUID REFERENCES sectors(id) ON DELETE SET NULL,
   quartier_id UUID NOT NULL REFERENCES quartiers(id) ON DELETE CASCADE,

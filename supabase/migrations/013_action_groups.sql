@@ -1,7 +1,7 @@
 -- 013: Action groups and group members
 
 CREATE TABLE action_groups (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   action_sector_id UUID NOT NULL REFERENCES action_sectors(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   responsible_id UUID REFERENCES profiles(id),
@@ -12,7 +12,7 @@ CREATE TABLE action_groups (
 CREATE INDEX idx_action_groups_sector ON action_groups(action_sector_id);
 
 CREATE TABLE action_group_members (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   group_id UUID NOT NULL REFERENCES action_groups(id) ON DELETE CASCADE,
   volunteer_id UUID NOT NULL REFERENCES profiles(id),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),

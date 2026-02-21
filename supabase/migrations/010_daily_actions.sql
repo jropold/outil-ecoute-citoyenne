@@ -1,6 +1,6 @@
 -- Actions du jour (porte-à-porte planifié)
 CREATE TABLE daily_actions (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   quartier_id UUID REFERENCES quartiers(id) ON DELETE SET NULL,
   geometry JSONB NOT NULL,
