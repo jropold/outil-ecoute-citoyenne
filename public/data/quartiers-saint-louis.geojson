@@ -1,0 +1,258 @@
+{
+  "type": "FeatureCollection",
+  "name": "Quartiers de Saint-Louis",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "Centre-Ville", "code": "CV" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.4050, -21.2700],
+          [55.4150, -21.2700],
+          [55.4150, -21.2780],
+          [55.4050, -21.2780],
+          [55.4050, -21.2700]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Le Gol", "code": "LG" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.3950, -21.2720],
+          [55.4050, -21.2720],
+          [55.4050, -21.2800],
+          [55.3950, -21.2800],
+          [55.3950, -21.2720]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Bois-de-Nèfles", "code": "BN" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.4000, -21.2600],
+          [55.4120, -21.2600],
+          [55.4120, -21.2700],
+          [55.4000, -21.2700],
+          [55.4000, -21.2600]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "La Rivière", "code": "LR" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.4150, -21.2650],
+          [55.4280, -21.2650],
+          [55.4280, -21.2780],
+          [55.4150, -21.2780],
+          [55.4150, -21.2650]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Les Makes", "code": "LM" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.3850, -21.2200],
+          [55.4000, -21.2200],
+          [55.4000, -21.2350],
+          [55.3850, -21.2350],
+          [55.3850, -21.2200]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Cilaos", "code": "CI" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.4500, -21.1300],
+          [55.4700, -21.1300],
+          [55.4700, -21.1500],
+          [55.4500, -21.1500],
+          [55.4500, -21.1300]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "La Ouaki", "code": "LO" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.3900, -21.2800],
+          [55.4000, -21.2800],
+          [55.4000, -21.2880],
+          [55.3900, -21.2880],
+          [55.3900, -21.2800]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Plateau du Gol", "code": "PG" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.3850, -21.2880],
+          [55.4000, -21.2880],
+          [55.4000, -21.3000],
+          [55.3850, -21.3000],
+          [55.3850, -21.2880]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Les Canots", "code": "LC" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.4050, -21.2800],
+          [55.4150, -21.2800],
+          [55.4150, -21.2900],
+          [55.4050, -21.2900],
+          [55.4050, -21.2800]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Le Ruisseau", "code": "RU" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.4150, -21.2780],
+          [55.4250, -21.2780],
+          [55.4250, -21.2860],
+          [55.4150, -21.2860],
+          [55.4150, -21.2780]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Bel Air", "code": "BA" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.4000, -21.2500],
+          [55.4100, -21.2500],
+          [55.4100, -21.2600],
+          [55.4000, -21.2600],
+          [55.4000, -21.2500]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Roches Maigres", "code": "RM" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.4100, -21.2500],
+          [55.4200, -21.2500],
+          [55.4200, -21.2600],
+          [55.4100, -21.2600],
+          [55.4100, -21.2500]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Le Gol Les Hauts", "code": "GH" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.3850, -21.2500],
+          [55.4000, -21.2500],
+          [55.4000, -21.2620],
+          [55.3850, -21.2620],
+          [55.3850, -21.2500]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Ilet du Gol", "code": "IG" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.3900, -21.2620],
+          [55.4000, -21.2620],
+          [55.4000, -21.2720],
+          [55.3900, -21.2720],
+          [55.3900, -21.2620]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Grand Fond", "code": "GF" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.4200, -21.2600],
+          [55.4300, -21.2600],
+          [55.4300, -21.2700],
+          [55.4200, -21.2700],
+          [55.4200, -21.2600]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Tapage", "code": "TA" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.4150, -21.2860],
+          [55.4250, -21.2860],
+          [55.4250, -21.2950],
+          [55.4150, -21.2950],
+          [55.4150, -21.2860]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Crève Coeur", "code": "CC" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.4250, -21.2780],
+          [55.4350, -21.2780],
+          [55.4350, -21.2880],
+          [55.4250, -21.2880],
+          [55.4250, -21.2780]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Bois de Nèfles Cocos", "code": "BC" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [55.4120, -21.2600],
+          [55.4200, -21.2600],
+          [55.4200, -21.2700],
+          [55.4120, -21.2700],
+          [55.4120, -21.2600]
+        ]]
+      }
+    }
+  ]
+}
