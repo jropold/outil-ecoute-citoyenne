@@ -1,9 +1,9 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react';
 import {
-  demoProfile, demoVisits, demoQuartiers, demoSectors, demoKPIs,
-  demoQuartierStats, demoDailyVisits, demoTopTopics, demoUsers,
+  demoProfile, demoVisits, demoQuartiers, demoSectors, demoUsers,
   demoDailyActions, demoActionSectors, demoActionGroups, demoActionGroupMembers,
   demoCampaignMembers, demoActionMembers,
+  computeKPIs, computeQuartierStats, computeDailyVisits, computeTopTopics,
 } from '../lib/demoData';
 import type { Profile, Quartier, Sector, Visit, DailyAction, ActionSector, ActionGroup, ActionGroupMember, CampaignMember, ActionMember } from '../types/database';
 import type { GlobalKPIs, QuartierStats, DailyVisits, TopicCount } from '../types/models';
@@ -62,12 +62,18 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   const [isDemo, setIsDemo] = useState(() => localStorage.getItem('demo-mode') === 'true');
   const [visits, setVisits] = useState<Visit[]>(demoVisits);
   const [quartiers, setQuartiers] = useState<Quartier[]>(demoQuartiers);
-  const [dailyActions, setDailyActions] = useState<DailyAction[]>(demoDailyActions);
+  const [dailyActions, setDailyActions] = useState<DailyAction[]>(demoDailyActions as DailyAction[]);
   const [actionSectors, setActionSectors] = useState<ActionSector[]>(demoActionSectors);
   const [actionGroups, setActionGroups] = useState<ActionGroup[]>(demoActionGroups);
   const [groupMembers, setGroupMembers] = useState<ActionGroupMember[]>(demoActionGroupMembers);
   const [campaignMembers, setCampaignMembers] = useState<CampaignMember[]>(demoCampaignMembers);
   const [actionMembers, setActionMembers] = useState<ActionMember[]>(demoActionMembers);
+
+  // Dynamic stats computed from visits + quartiers
+  const kpis = useMemo(() => computeKPIs(visits), [visits]);
+  const quartierStats = useMemo(() => computeQuartierStats(visits, quartiers), [visits, quartiers]);
+  const dailyVisitsData = useMemo(() => computeDailyVisits(visits), [visits]);
+  const topTopics = useMemo(() => computeTopTopics(visits), [visits]);
 
   const enterDemo = useCallback(() => {
     localStorage.setItem('demo-mode', 'true');
@@ -184,10 +190,10 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       quartiers,
       addQuartier,
       sectors: demoSectors,
-      kpis: demoKPIs,
-      quartierStats: demoQuartierStats,
-      dailyVisits: demoDailyVisits,
-      topTopics: demoTopTopics,
+      kpis,
+      quartierStats,
+      dailyVisits: dailyVisitsData,
+      topTopics,
       users: demoUsers,
       dailyActions,
       addDailyAction,
