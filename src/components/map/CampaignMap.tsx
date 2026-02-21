@@ -19,13 +19,14 @@ import 'leaflet/dist/leaflet.css';
 
 interface CampaignMapProps {
   activeActions?: DailyAction[];
+  allActions?: DailyAction[];
   drawMode?: boolean;
   drawnGeometry?: GeoJSON.Geometry | null;
   onPolygonDrawn?: (geojson: GeoJSON.Geometry) => void;
   onDrawCancel?: () => void;
 }
 
-export function CampaignMap({ activeActions = [], drawMode = false, drawnGeometry, onPolygonDrawn, onDrawCancel }: CampaignMapProps) {
+export function CampaignMap({ activeActions = [], allActions = [], drawMode = false, drawnGeometry, onPolygonDrawn, onDrawCancel }: CampaignMapProps) {
   const { quartiers, loading: quartiersLoading } = useQuartiers();
   const { quartierStats, loading: statsLoading } = useStats();
   const { visits, loading: visitsLoading } = useVisits();
@@ -62,7 +63,7 @@ export function CampaignMap({ activeActions = [], drawMode = false, drawnGeometr
       >
         <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
         <QuartierLayer quartiers={quartiers} stats={quartierStats} />
-        <ActionZoneLayer actions={activeActions} />
+        <ActionZoneLayer actions={activeActions} allActions={allActions} />
         <VisitMarkersLayer visits={visits} visible={showMarkers} />
         <VisitHeatmapLayer visits={visits} visible={showHeatmap} />
         <UserLocationMarker visible={showLocation} />
@@ -92,7 +93,7 @@ export function CampaignMap({ activeActions = [], drawMode = false, drawnGeometr
         onToggleHeatmap={() => setShowHeatmap((v) => !v)}
         onToggleLocation={() => setShowLocation((v) => !v)}
       />
-      <MapLegend hasActionZone={activeActions.length > 0} showVisitMarkers={showMarkers} />
+      <MapLegend hasActionZone={activeActions.length > 0} hasHistoricalZone={allActions.some(a => a.status === 'completed')} showVisitMarkers={showMarkers} />
     </div>
   );
 }

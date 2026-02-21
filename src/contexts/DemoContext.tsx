@@ -25,6 +25,7 @@ export interface DemoContextType {
   dailyActions: DailyAction[];
   addDailyAction: (action: DailyAction) => void;
   updateDailyAction: (actionId: string, status: 'completed' | 'cancelled') => void;
+  removeDailyAction: (actionId: string, deleteVisits: boolean) => void;
   // Action hierarchy
   actionSectors: ActionSector[];
   addActionSector: (sector: ActionSector) => void;
@@ -82,7 +83,33 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   const updateDailyAction = useCallback((actionId: string, status: 'completed' | 'cancelled') => {
     setDailyActions(prev => prev.map(a =>
       a.id === actionId ? { ...a, status } : a
-    ).filter(a => a.status === 'active'));
+    ));
+  }, []);
+
+  const removeDailyAction = useCallback((actionId: string, deleteVisits: boolean) => {
+    // Cascade: remove sectors → groups → members of this action
+    setActionSectors(prev => {
+      const toRemove = prev.filter(s => s.action_id === actionId);
+      const sectorIds = toRemove.map(s => s.id);
+      setActionGroups(gPrev => {
+        const groupsToRemove = gPrev.filter(g => sectorIds.includes(g.action_sector_id));
+        const groupIds = groupsToRemove.map(g => g.id);
+        setGroupMembers(mPrev => mPrev.filter(m => !groupIds.includes(m.group_id)));
+        return gPrev.filter(g => !sectorIds.includes(g.action_sector_id));
+      });
+      return prev.filter(s => s.action_id !== actionId);
+    });
+    // Optionally remove visits
+    if (deleteVisits) {
+      setVisits(prev => prev.filter(v => v.action_id !== actionId));
+    } else {
+      // SET NULL equivalent
+      setVisits(prev => prev.map(v =>
+        v.action_id === actionId ? { ...v, action_id: null, action_group_id: null } : v
+      ));
+    }
+    // Remove the action itself
+    setDailyActions(prev => prev.filter(a => a.id !== actionId));
   }, []);
 
   // Action sectors
@@ -134,6 +161,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       dailyActions,
       addDailyAction,
       updateDailyAction,
+      removeDailyAction,
       actionSectors,
       addActionSector,
       removeActionSector,

@@ -64,6 +64,7 @@ export default function VisitPage() {
               activeActionId={activeAction?.id || null}
               activeGroupId={activeGroupId}
               activeActionName={activeAction?.name || null}
+              activeQuartierId={activeAction?.quartier_id || null}
             />
           </div>
         </div>

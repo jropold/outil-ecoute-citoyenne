@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Button } from '../ui/Button';
-import { Input } from '../ui/Input';
 import { useToast } from '../ui/Toast';
 import { useAuth } from '../../hooks/useAuth';
 import { useDailyActions } from '../../hooks/useDailyActions';
+import { useQuartiers } from '../../hooks/useQuartiers';
 
 interface CreateActionPanelProps {
   drawnGeometry: GeoJSON.Geometry | null;
@@ -23,6 +23,7 @@ export function CreateActionPanel({
   const { user } = useAuth();
   const { createAction } = useDailyActions();
   const { addToast } = useToast();
+  const { quartiers } = useQuartiers();
   const [name, setName] = useState('');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
@@ -63,17 +64,30 @@ export function CreateActionPanel({
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          label="Nom de la zone (= quartier)"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Ex : Centre-Ville Nord"
-          required
-        />
-
-        <p className="text-xs text-gray-500 -mt-2">
-          Ce nom sera aussi utilisé comme nom de quartier pour les visites.
-        </p>
+        <div>
+          <label htmlFor="action-zone-name" className="block text-sm font-medium text-gray-700 mb-1">
+            Nom de la zone (= quartier)
+          </label>
+          <input
+            id="action-zone-name"
+            type="text"
+            list="quartiers-list"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Ex : Centre-Ville Nord"
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#E91E8C] focus:border-[#E91E8C] text-sm"
+            autoComplete="off"
+          />
+          <datalist id="quartiers-list">
+            {quartiers.map((q) => (
+              <option key={q.id} value={q.name} />
+            ))}
+          </datalist>
+          <p className="text-xs text-gray-500 mt-1">
+            Ce nom sera aussi utilisé comme nom de quartier pour les visites. Tapez pour chercher un quartier existant ou créez-en un nouveau.
+          </p>
+        </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optionnel)</label>

@@ -9,7 +9,7 @@ import { useAuth } from '../hooks/useAuth';
 const ADMIN_ROLES = ['admin'];
 
 export default function MapPage() {
-  const { actions, completeAction, cancelAction } = useDailyActions();
+  const { actions, allActions, completeAction, cancelAction } = useDailyActions();
   const { profile } = useAuth();
   const navigate = useNavigate();
 
@@ -123,6 +123,7 @@ export default function MapPage() {
         <div className="flex-1">
           <CampaignMap
             activeActions={actions}
+            allActions={allActions}
             drawMode={drawMode}
             drawnGeometry={drawnGeometry}
             onPolygonDrawn={handlePolygonDrawn}

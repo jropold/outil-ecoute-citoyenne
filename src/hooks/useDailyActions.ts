@@ -7,11 +7,13 @@ import type { DailyAction, Quartier, Database } from '../types/database';
 export function useDailyActions() {
   const demo = useDemo();
   const [actions, setActions] = useState<DailyAction[]>([]);
+  const [allActions, setAllActions] = useState<DailyAction[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchActions = useCallback(async () => {
     if (demo?.isDemo) {
-      setActions(demo.dailyActions || []);
+      const today = new Date().toISOString().split('T')[0];
+      setActions((demo.dailyActions || []).filter(a => a.status === 'active' && a.action_date === today));
       setLoading(false);
       return;
     }
@@ -28,9 +30,24 @@ export function useDailyActions() {
     setLoading(false);
   }, [demo?.isDemo, demo?.dailyActions]);
 
+  const fetchAllActions = useCallback(async () => {
+    if (demo?.isDemo) {
+      setAllActions((demo.dailyActions || []).filter(a => a.status === 'active' || a.status === 'completed'));
+      return;
+    }
+
+    const { data } = await supabase
+      .from('daily_actions')
+      .select('*')
+      .in('status', ['active', 'completed'])
+      .order('action_date', { ascending: false });
+    setAllActions(data || []);
+  }, [demo?.isDemo, demo?.dailyActions]);
+
   useEffect(() => {
     fetchActions();
-  }, [fetchActions]);
+    fetchAllActions();
+  }, [fetchActions, fetchAllActions]);
 
   const createAction = async (action: {
     name: string;
@@ -119,12 +136,15 @@ export function useDailyActions() {
       .update({ status: 'completed' } as Database['public']['Tables']['daily_actions']['Update'])
       .eq('id', actionId);
     setActions(prev => prev.filter(a => a.id !== actionId));
+    // Refresh allActions to include the newly completed action
+    fetchAllActions();
   };
 
   const cancelAction = async (actionId: string) => {
     if (demo?.isDemo) {
       demo.updateDailyAction?.(actionId, 'cancelled');
       setActions(prev => prev.filter(a => a.id !== actionId));
+      setAllActions(prev => prev.filter(a => a.id !== actionId));
       return;
     }
 
@@ -133,7 +153,27 @@ export function useDailyActions() {
       .update({ status: 'cancelled' } as Database['public']['Tables']['daily_actions']['Update'])
       .eq('id', actionId);
     setActions(prev => prev.filter(a => a.id !== actionId));
+    setAllActions(prev => prev.filter(a => a.id !== actionId));
   };
 
-  return { actions, loading, fetchActions, createAction, completeAction, cancelAction };
+  const deleteAction = async (actionId: string, deleteVisits: boolean) => {
+    if (demo?.isDemo) {
+      demo.removeDailyAction?.(actionId, deleteVisits);
+      setActions(prev => prev.filter(a => a.id !== actionId));
+      setAllActions(prev => prev.filter(a => a.id !== actionId));
+      return;
+    }
+
+    // Optionally delete linked visits first
+    if (deleteVisits) {
+      await supabase.from('visits').delete().eq('action_id', actionId);
+    }
+    // Delete action — cascades to sectors/groups/members, SET NULL on visits
+    const { error } = await supabase.from('daily_actions').delete().eq('id', actionId);
+    if (error) throw error;
+    setActions(prev => prev.filter(a => a.id !== actionId));
+    setAllActions(prev => prev.filter(a => a.id !== actionId));
+  };
+
+  return { actions, allActions, loading, fetchActions, fetchAllActions, createAction, completeAction, cancelAction, deleteAction };
 }

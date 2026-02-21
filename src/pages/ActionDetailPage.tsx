@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
+import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import { ActionSectorList } from '../components/actions/ActionSectorList';
 import { CreateActionSectorPanel } from '../components/actions/CreateActionSectorPanel';
 import { useActionSectors } from '../hooks/useActionSectors';
 import { useDailyActions } from '../hooks/useDailyActions';
+import { useVisits } from '../hooks/useVisits';
 import { useAuth } from '../hooks/useAuth';
 import { useDemo } from '../contexts/DemoContext';
 
@@ -16,9 +18,13 @@ export default function ActionDetailPage() {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const demo = useDemo();
-  const { actions } = useDailyActions();
+  const { actions, deleteAction } = useDailyActions();
+  const { visits } = useVisits();
   const { sectors, createSector, deleteSector } = useActionSectors(actionId || null);
   const [showCreateSector, setShowCreateSector] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleteVisits, setDeleteVisits] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const isAdmin = profile ? ADMIN_ROLES.includes(profile.role) : false;
 
@@ -27,6 +33,20 @@ export default function ActionDetailPage() {
     || (demo?.isDemo ? demo.dailyActions.find(a => a.id === actionId) : null);
 
   const users = demo?.isDemo ? demo.users : [];
+
+  // Count visits linked to this action
+  const linkedVisitsCount = visits.filter(v => v.action_id === actionId).length;
+
+  const handleDelete = async () => {
+    if (!actionId) return;
+    setDeleting(true);
+    try {
+      await deleteAction(actionId, deleteVisits);
+      navigate('/carte');
+    } catch {
+      setDeleting(false);
+    }
+  };
 
   if (!action) {
     return (
@@ -133,6 +153,41 @@ export default function ActionDetailPage() {
           onDeleteSector={deleteSector}
         />
       </div>
+
+      {/* Delete action — admin only */}
+      {isAdmin && (
+        <div className="border-t border-gray-200 pt-6">
+          <Button variant="danger" size="sm" onClick={() => setShowDeleteDialog(true)}>
+            Supprimer l'action
+          </Button>
+        </div>
+      )}
+
+      {/* Delete confirmation dialog */}
+      <ConfirmDialog
+        isOpen={showDeleteDialog}
+        title="Supprimer l'action"
+        message="Cette action sera définitivement supprimée avec ses secteurs, groupes et membres."
+        confirmLabel="Supprimer définitivement"
+        variant="danger"
+        loading={deleting}
+        onConfirm={handleDelete}
+        onCancel={() => { setShowDeleteDialog(false); setDeleteVisits(false); }}
+      >
+        {linkedVisitsCount > 0 && (
+          <label className="flex items-start gap-2 p-3 bg-red-50 rounded-lg cursor-pointer">
+            <input
+              type="checkbox"
+              checked={deleteVisits}
+              onChange={(e) => setDeleteVisits(e.target.checked)}
+              className="mt-0.5 rounded border-gray-300 text-red-600 focus:ring-red-500"
+            />
+            <span className="text-sm text-gray-700">
+              Supprimer aussi les <strong>{linkedVisitsCount}</strong> visite{linkedVisitsCount > 1 ? 's' : ''} liée{linkedVisitsCount > 1 ? 's' : ''} à cette action
+            </span>
+          </label>
+        )}
+      </ConfirmDialog>
     </div>
   );
 }

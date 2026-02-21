@@ -3,10 +3,11 @@ import { COLORS } from '../../config/constants';
 
 interface MapLegendProps {
   hasActionZone?: boolean;
+  hasHistoricalZone?: boolean;
   showVisitMarkers?: boolean;
 }
 
-export function MapLegend({ hasActionZone, showVisitMarkers }: MapLegendProps) {
+export function MapLegend({ hasActionZone, hasHistoricalZone, showVisitMarkers }: MapLegendProps) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -55,16 +56,27 @@ export function MapLegend({ hasActionZone, showVisitMarkers }: MapLegendProps) {
             <div className="w-5 h-3 rounded-sm border-2" style={{ backgroundColor: `${COLORS.nonCouvert}40`, borderColor: COLORS.nonCouvert }} />
             <span className="text-xs text-gray-700 font-medium">Faible (&lt;20%)</span>
           </div>
-          {hasActionZone && (
+          {(hasActionZone || hasHistoricalZone) && (
             <>
               <hr className="border-gray-200" />
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-5 h-3 rounded-sm border-2 border-dashed"
-                  style={{ backgroundColor: `${COLORS.actionZone}20`, borderColor: COLORS.actionZone }}
-                />
-                <span className="text-xs font-bold" style={{ color: COLORS.actionZone }}>Action du jour</span>
-              </div>
+              {hasActionZone && (
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-5 h-3 rounded-sm border-2 border-dashed"
+                    style={{ backgroundColor: `${COLORS.actionZone}20`, borderColor: COLORS.actionZone }}
+                  />
+                  <span className="text-xs font-bold" style={{ color: COLORS.actionZone }}>Action du jour</span>
+                </div>
+              )}
+              {hasHistoricalZone && (
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-5 h-3 rounded-sm border-2"
+                    style={{ backgroundColor: '#6B728014', borderColor: '#9CA3AF' }}
+                  />
+                  <span className="text-xs font-medium text-gray-500">Action terminée</span>
+                </div>
+              )}
             </>
           )}
           {showVisitMarkers && (

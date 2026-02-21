@@ -44,11 +44,12 @@ interface VisitFormProps {
   activeActionId?: string | null;
   activeGroupId?: string | null;
   activeActionName?: string | null;
+  activeQuartierId?: string | null;
 }
 
-export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActionName }: VisitFormProps) {
+export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActionName, activeQuartierId }: VisitFormProps) {
   const { user } = useAuth();
-  const { quartiers } = useQuartiers();
+  const { quartiers } = useQuartiers(activeQuartierId ? undefined : { onlyFromActions: true });
   const { createVisit } = useVisits();
   const { isOnline, refreshCount } = useOfflineQueue();
   const { addToast } = useToast();
@@ -72,6 +73,13 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
   const [contactAddress, setContactAddress] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [householdVoters, setHouseholdVoters] = useState('');
+
+  // Auto-select quartier from active action
+  useEffect(() => {
+    if (activeQuartierId) {
+      setQuartierId(activeQuartierId);
+    }
+  }, [activeQuartierId]);
 
   // Auto-detect GPS location
   useEffect(() => {
@@ -254,14 +262,26 @@ export function VisitForm({ onSuccess, activeActionId, activeGroupId, activeActi
       </div>
 
       {/* Quartier selection */}
-      <Select
-        label="Quartier"
-        value={quartierId}
-        onChange={(e) => setQuartierId(e.target.value)}
-        options={quartiers.map((q) => ({ value: q.id, label: q.name }))}
-        placeholder="Sélectionner un quartier"
-        required
-      />
+      {activeQuartierId ? (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Quartier</label>
+          <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700">
+            <svg className="w-4 h-4 text-[#E91E8C]" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/>
+            </svg>
+            <span className="font-medium">{quartiers.find(q => q.id === activeQuartierId)?.name || activeActionName || 'Quartier de l\'action'}</span>
+          </div>
+        </div>
+      ) : (
+        <Select
+          label="Quartier"
+          value={quartierId}
+          onChange={(e) => setQuartierId(e.target.value)}
+          options={quartiers.map((q) => ({ value: q.id, label: q.name }))}
+          placeholder="Sélectionner un quartier"
+          required
+        />
+      )}
 
       {/* Status selection - big touch buttons */}
       <div>
