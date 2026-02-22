@@ -5,7 +5,7 @@ const navItems = [
   { to: '/carte', label: 'Carte', icon: 'M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7' },
   { to: '/actions', label: 'Actions', icon: 'M13 10V3L4 14h7v7l9-11h-7' },
   { to: '/visites', label: 'Visites', icon: 'M12 4v16m8-8H4' },
-  { to: '/equipe', label: 'Équipe', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' },
+  { to: '/presentation', label: 'Présentation', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z' },
 ];
 
 export function MobileNav() {

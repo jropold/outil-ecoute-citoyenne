@@ -14,6 +14,7 @@ const TeamPage = lazy(() => import('./pages/TeamPage'));
 const ActionsPage = lazy(() => import('./pages/ActionsPage'));
 const ActionDetailPage = lazy(() => import('./pages/ActionDetailPage'));
 const AccountPage = lazy(() => import('./pages/AccountPage'));
+const PresentationPage = lazy(() => import('./pages/PresentationPage'));
 
 function PageLoader() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <ToastProvider>
           <Suspense fallback={<PageLoader />}>
             <Routes>
+              <Route path="/presentation" element={<PresentationPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/en-attente" element={<PendingApprovalPage />} />
               <Route
