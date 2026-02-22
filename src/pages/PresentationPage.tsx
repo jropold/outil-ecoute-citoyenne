@@ -51,9 +51,9 @@ const features = [
 ];
 
 const parcours = [
-  { period: '2013 — 2023', role: 'GREEN BIRD — Logistique export', detail: '10 ans d\'évolution : assistant logistique puis responsable logistique export. Gestion de 100+ conteneurs/mois vers l\'international, coordination fournisseurs et transitaires.' },
-  { period: '2023 — présent', role: 'Créateur de SEALOG', detail: 'Conception et développement d\'un SaaS complet de gestion logistique maritime (React, TypeScript, Node.js, Supabase). De l\'idée au produit, en totale autonomie.' },
-  { period: '2024 — 2026', role: 'Développement Écoute Citoyenne', detail: 'Conception de cet outil de campagne terrain pour la #TeamJMD. Cartographie, analytics, gestion d\'équipe — un outil sur-mesure pour Saint-Louis.' },
+  { period: '2016 — présent', role: 'GREEN BIRD — Logistique export', detail: 'Assistant logistique puis responsable logistique export. Gestion de 100+ conteneurs/mois vers l\'international, coordination fournisseurs et transitaires.' },
+  { period: '2026', role: 'Créateur de SEALOG', detail: 'Conception et développement d\'un SaaS complet de gestion logistique maritime (React, TypeScript, Node.js, Supabase). De l\'idée au produit, en totale autonomie.' },
+  { period: '2026', role: 'Création d\'Écoute Citoyenne', detail: 'Conception de cet outil de campagne terrain pour la #TeamJMD. Cartographie, analytics, gestion d\'équipe — un outil sur-mesure pour Saint-Louis.' },
 ];
 
 const competences = [
@@ -203,12 +203,13 @@ export default function PresentationPage() {
               <p className="text-gray-600 leading-relaxed">
                 Né et grandi à <strong>La Chapelle, Saint-Louis</strong>, Jérémy est un Saint-Louisien attaché à son territoire.
                 Après un Bac Sciences au Lycée de Bois d'Olive et une classe préparatoire PTSI-PT au Lycée Lislet Geoffroy,
-                il obtient sa Licence de Mathématiques à l'Université de La Réunion.
+                il poursuit en Licence de Mathématiques à l'Université de La Réunion. Les circonstances de la vie
+                l'amènent à découvrir le monde du travail plus tôt que prévu.
               </p>
               <p className="text-gray-600 leading-relaxed mt-3">
-                Pendant <strong>10 ans chez GREEN BIRD</strong>, il gravit les échelons de la logistique internationale —
+                Depuis <strong>2016 chez GREEN BIRD</strong>, il gravit les échelons de la logistique internationale —
                 d'assistant à responsable logistique export, gérant plus de 100 conteneurs par mois vers l'international.
-                Cette expérience lui forge une rigueur opérationnelle et une capacité à gérer la complexité.
+                Cette expérience lui forge une rigueur opérationnelle et une capacité à gérer la complexité au quotidien.
               </p>
               <p className="text-gray-600 leading-relaxed mt-3">
                 En parallèle, il se forme au développement web et crée <strong>SEALOG</strong>,
@@ -237,92 +238,6 @@ export default function PresentationPage() {
               ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Données utiles — Saint-Louis */}
-      <section className="bg-[#1B2A4A] text-white py-16 md:py-24">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold mb-3">Saint-Louis en chiffres</h2>
-            <p className="text-white/60">Données clés pour comprendre le territoire</p>
-          </div>
-
-          {/* Big numbers */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-            {[
-              { value: '54 478', label: 'Habitants (INSEE 2022)', color: 'text-white' },
-              { value: '42 850', label: 'Inscrits sur les listes électorales', color: 'text-white' },
-              { value: '62%', label: 'Population de moins de 45 ans', color: 'text-[#E91E8C]' },
-              { value: '43%', label: 'Taux de pauvreté', color: 'text-amber-400' },
-            ].map((d) => (
-              <div key={d.label} className="bg-white/5 rounded-xl p-5 text-center border border-white/10">
-                <p className={`text-2xl md:text-3xl font-bold ${d.color}`}>{d.value}</p>
-                <p className="text-xs text-white/50 mt-1">{d.label}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Élections municipales 2020 */}
-            <div className="bg-white/5 rounded-xl p-6 border border-white/10">
-              <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
-                <svg className="w-5 h-5 text-[#E91E8C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-                Municipales 2020 — 2nd tour
-              </h3>
-              <div className="space-y-3">
-                {[
-                  { name: 'Juliana M\'Doihoma', pct: 44.22, color: 'bg-[#E91E8C]' },
-                  { name: 'Patrick Hoarau', pct: 31.52, color: 'bg-blue-500' },
-                  { name: 'Cyrille Hamilcaro', pct: 24.26, color: 'bg-gray-400' },
-                ].map((c) => (
-                  <div key={c.name}>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-white/80">{c.name}</span>
-                      <span className="font-semibold">{c.pct}%</span>
-                    </div>
-                    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                      <div className={`h-full ${c.color} rounded-full`} style={{ width: `${c.pct}%` }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-white/40 mt-4">Juliana M'Doihoma ne se représente pas en 2026 — 7 candidats déclarés</p>
-            </div>
-
-            {/* Indicateurs socio-économiques */}
-            <div className="bg-white/5 rounded-xl p-6 border border-white/10">
-              <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
-                <svg className="w-5 h-5 text-[#E91E8C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-                Indicateurs socio-économiques
-              </h3>
-              <div className="space-y-3">
-                {[
-                  { label: 'Taux de chômage', value: '33,2%', note: 'Parmi les plus élevés de La Réunion' },
-                  { label: 'Revenu médian mensuel', value: '~870 €', note: 'Nettement sous la moyenne nationale' },
-                  { label: 'Part des 18-25 ans', value: '~12%', note: 'Jeunesse importante, enjeu majeur' },
-                  { label: 'Présidentielle 2022 — T1', value: 'Mélenchon 44,5%', note: '1er au premier tour' },
-                  { label: 'Présidentielle 2022 — T2', value: 'Le Pen 65,6%', note: 'Vote protestataire marqué' },
-                ].map((i) => (
-                  <div key={i.label} className="flex justify-between items-start">
-                    <div>
-                      <p className="text-sm text-white/80">{i.label}</p>
-                      <p className="text-xs text-white/40">{i.note}</p>
-                    </div>
-                    <p className="font-semibold text-sm text-white whitespace-nowrap ml-4">{i.value}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <p className="text-center text-xs text-white/30 mt-8">
-            Sources : INSEE 2022, Ministère de l'Intérieur, Préfecture de La Réunion
-          </p>
         </div>
       </section>
 
